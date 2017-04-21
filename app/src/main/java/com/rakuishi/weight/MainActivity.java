@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.view.View;
 
 import com.evernote.android.state.State;
 import com.evernote.android.state.StateSaver;
@@ -22,7 +23,9 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
-public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends AppCompatActivity implements
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+        View.OnClickListener {
 
     private static final int REQUEST_OAUTH = 1;
 
@@ -44,9 +47,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerView.addItemDecoration(new DividerItemDecoration(getResources()));
         binding.recyclerView.setAdapter(adapter);
+        binding.fab.setOnClickListener(this);
 
         compositeDisposable = new CompositeDisposable();
-        client = FitnessWeightHelper.buildClient(this, this, this);
+        client = FitnessWeightHelper.buildGoogleApiClient(this, this, this);
     }
 
     @Override
@@ -73,11 +77,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_OAUTH) {
             authInProgress = false;
-            if (resultCode == RESULT_OK) {
+            if (resultCode == RESULT_OK && !client.isConnecting() && !client.isConnected()) {
                 // Make sure the app is not already connected or attempting to connect
-                if (!client.isConnecting() && !client.isConnected()) {
-                    client.connect();
-                }
+                client.connect();
             }
         }
     }
@@ -92,11 +94,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        Disposable disposable = FitnessWeightHelper.loadDataPoints(client, 4)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.newThread())
-                .subscribe(dataPoints -> adapter.setDataPoints(dataPoints));
-        compositeDisposable.add(disposable);
+        loadFitnessWeight();
     }
 
     @Override
@@ -130,4 +128,31 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     // endregion
+
+    // region View.OnClickListener
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.fab) {
+            Disposable disposable = FitnessWeightHelper.insert(MainActivity.this, client, 60.f)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.newThread())
+                    .subscribe(() -> {
+                        loadFitnessWeight();
+                    }, throwable -> {
+                        Timber.d(throwable.getMessage());
+                    });
+            compositeDisposable.add(disposable);
+        }
+    }
+
+    // endregion
+
+    private void loadFitnessWeight() {
+        Disposable disposable = FitnessWeightHelper.find(client, 3)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.newThread())
+                .subscribe(dataPoints -> adapter.setDataPoints(dataPoints));
+        compositeDisposable.add(disposable);
+    }
 }
