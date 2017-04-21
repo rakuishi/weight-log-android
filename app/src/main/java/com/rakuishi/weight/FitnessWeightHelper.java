@@ -1,6 +1,7 @@
 package com.rakuishi.weight;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -16,6 +17,7 @@ import com.google.android.gms.fitness.request.DataReadRequest;
 import com.google.android.gms.fitness.result.DataReadResult;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -51,7 +53,7 @@ public class FitnessWeightHelper {
                     Fitness.HistoryApi.readData(client, getDataReadRequest(amount)).await(1, TimeUnit.MINUTES);
 
             if (dataReadResult.getDataSets().size() == 1) {
-                e.onNext(dataReadResult.getDataSets().get(0).getDataPoints());
+                e.onNext(reverse(dataReadResult.getDataSets().get(0).getDataPoints()));
                 e.onComplete();
             } else {
                 e.onError(new IllegalStateException("Failed to find user's weight data-points."));
@@ -74,6 +76,18 @@ public class FitnessWeightHelper {
                 .read(DataType.TYPE_WEIGHT)
                 .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
                 .build();
+    }
+
+    private static List<DataPoint> reverse(@Nullable List<DataPoint> dataPoints) {
+        List<DataPoint> reverseDataPoints = new ArrayList<>();
+
+        if (dataPoints != null) {
+            for (int i = dataPoints.size() - 1; i >= 0; i--) {
+                reverseDataPoints.add(dataPoints.get(i));
+            }
+        }
+
+        return reverseDataPoints;
     }
 
     public static Completable insert(Context context, GoogleApiClient client, float weight) {
