@@ -9,6 +9,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 
+import com.evernote.android.state.State;
+import com.evernote.android.state.StateSaver;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -23,8 +25,10 @@ import timber.log.Timber;
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final int REQUEST_OAUTH = 1;
-    private static final String AUTH_PENDING = "auth_state_pending";
-    private boolean authInProgress = false;
+
+    @State
+    boolean authInProgress = false;
+
     private GoogleApiClient client = null;
     private CompositeDisposable compositeDisposable;
     private ActivityMainBinding binding;
@@ -34,10 +38,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-
-        if (savedInstanceState != null) {
-            authInProgress = savedInstanceState.getBoolean(AUTH_PENDING);
-        }
+        StateSaver.restoreInstanceState(this, savedInstanceState);
 
         adapter = new FitnessWeightAdapter(this);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -84,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(AUTH_PENDING, authInProgress);
+        StateSaver.restoreInstanceState(this, outState);
     }
 
     // region GoogleApiClient.ConnectionCallbacks
