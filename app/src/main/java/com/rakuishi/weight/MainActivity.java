@@ -2,10 +2,12 @@ package com.rakuishi.weight;
 
 import android.content.Intent;
 import android.content.IntentSender;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -19,6 +21,7 @@ import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.request.DataReadRequest;
 import com.google.android.gms.fitness.result.DataReadResult;
+import com.rakuishi.weight.databinding.ActivityMainBinding;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -26,15 +29,14 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
-import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
+import static java.security.AccessController.getContext;
 import static java.text.DateFormat.getDateInstance;
-import static java.text.DateFormat.getTimeInstance;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -43,18 +45,24 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private boolean authInProgress = false;
     private GoogleApiClient client = null;
     private CompositeDisposable compositeDisposable;
+    private ActivityMainBinding binding;
+    private FitnessWeightAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         if (savedInstanceState != null) {
             authInProgress = savedInstanceState.getBoolean(AUTH_PENDING);
         }
 
-        compositeDisposable = new CompositeDisposable();
+        adapter = new FitnessWeightAdapter(this);
+        binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        binding.recyclerView.addItemDecoration(new DividerItemDecoration(getResources()));
+        binding.recyclerView.setAdapter(adapter);
 
+        compositeDisposable = new CompositeDisposable();
         buildFitnessClient();
     }
 
@@ -160,19 +168,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.newThread())
                 .subscribe(dataReadResult -> {
-                    if (dataReadResult != null) {
-                        DateFormat dateFormat = getDateInstance();
-                        for (DataSet dataSet : dataReadResult.getDataSets()) {
-                            for (DataPoint dataPoint : dataSet.getDataPoints()) {
-                                Timber.d("Data Point:");
-                                Timber.d("\tType: " + dataPoint.getDataType().getName());
-                                Timber.d("\tStart: " + dateFormat.format(dataPoint.getStartTime(TimeUnit.MILLISECONDS)));
-                                Timber.d("\tEnd: " + dateFormat.format(dataPoint.getEndTime(TimeUnit.MILLISECONDS)));
-                                for (Field field : dataPoint.getDataType().getFields()) {
-                                    Timber.d("\tFiled: " + field.getName() + ", Value: " + dataPoint.getValue(field));
-                                }
-                            }
-                        }
+                    if (dataReadResult != null && dataReadResult.getDataSets().size() == 1) {
+                        adapter.setDataPoints(dataReadResult.getDataSets().get(0).getDataPoints());
                     }
                 });
         compositeDisposable.add(disposable);

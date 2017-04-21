@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">weight</string>
+    <string name="unit_kg">kg</string>
 </resources>
