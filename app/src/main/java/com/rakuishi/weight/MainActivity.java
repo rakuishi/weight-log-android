@@ -11,32 +11,14 @@ import android.support.v7.widget.LinearLayoutManager;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.fitness.Fitness;
-import com.google.android.gms.fitness.data.DataPoint;
-import com.google.android.gms.fitness.data.DataSet;
-import com.google.android.gms.fitness.data.DataType;
-import com.google.android.gms.fitness.data.Field;
-import com.google.android.gms.fitness.request.DataReadRequest;
-import com.google.android.gms.fitness.result.DataReadResult;
 import com.rakuishi.weight.databinding.ActivityMainBinding;
 
-import java.text.DateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
-
-import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
-
-import static java.security.AccessController.getContext;
-import static java.text.DateFormat.getDateInstance;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -63,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         binding.recyclerView.setAdapter(adapter);
 
         compositeDisposable = new CompositeDisposable();
-        buildFitnessClient();
+        client = FitnessWeightHelper.buildClient(this, this, this);
     }
 
     @Override
@@ -109,8 +91,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        Timber.d("onConnected");
-        loadWeightData();
+        Disposable disposable = FitnessWeightHelper.loadDataPoints(client, 4)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.newThread())
+                .subscribe(dataPoints -> adapter.setDataPoints(dataPoints));
+        compositeDisposable.add(disposable);
     }
 
     @Override
@@ -141,58 +126,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 Timber.d(e.getMessage());
             }
         }
-    }
-
-    // endregion
-
-    // region private methods
-
-    private void buildFitnessClient() {
-        // https://developers.google.com/android/reference/com/google/android/gms/fitness/HistoryApi
-        // https://developers.google.com/android/reference/com/google/android/gms/common/Scopes#FITNESS_BODY_READ_WRITE
-
-        client = new GoogleApiClient.Builder(this)
-                .addApi(Fitness.HISTORY_API)
-                .addScope(new Scope(Scopes.FITNESS_BODY_READ_WRITE))
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
-    }
-
-    private void loadWeightData() {
-        Observable<DataReadResult> observable = Observable.create(e -> {
-            e.onNext(Fitness.HistoryApi.readData(client, queryWeightData()).await(1, TimeUnit.MINUTES));
-            e.onComplete();
-        });
-        Disposable disposable = observable
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.newThread())
-                .subscribe(dataReadResult -> {
-                    if (dataReadResult != null && dataReadResult.getDataSets().size() == 1) {
-                        adapter.setDataPoints(dataReadResult.getDataSets().get(0).getDataPoints());
-                    }
-                });
-        compositeDisposable.add(disposable);
-    }
-
-    private DataReadRequest queryWeightData() {
-        Calendar calendar = Calendar.getInstance();
-        Date now = new Date();
-        calendar.setTime(now);
-        long endTime = calendar.getTimeInMillis();
-        calendar.add(Calendar.WEEK_OF_YEAR, -4);
-        long startTime = calendar.getTimeInMillis();
-
-        DateFormat dateFormat = getDateInstance();
-        Timber.d("Range Start: " + dateFormat.format(startTime));
-        Timber.d("Range End: " + dateFormat.format(endTime));
-
-        DataReadRequest request = new DataReadRequest.Builder()
-                .read(DataType.TYPE_WEIGHT)
-                .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
-                .build();
-
-        return request;
     }
 
     // endregion
