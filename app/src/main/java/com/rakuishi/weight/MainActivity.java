@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onClickDataPoint(DataPoint dataPoint) {
-        Timber.d("onClickDataPoint: " + dataPoint.toString());
+        startActivity(DetailActivity.create(this, dataPoint));
 
         /*
         Disposable disposable = client.delete(dataPoint.getTimestamp(TimeUnit.MILLISECONDS))
