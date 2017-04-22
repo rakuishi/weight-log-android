@@ -1,15 +1,11 @@
 package com.rakuishi.weight;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentSender;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
@@ -22,7 +18,6 @@ import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.request.DataDeleteRequest;
 import com.google.android.gms.fitness.request.DataReadRequest;
-import com.google.android.gms.fitness.request.DataUpdateRequest;
 import com.google.android.gms.fitness.result.DataReadResult;
 
 import java.text.DateFormat;
@@ -36,7 +31,6 @@ import io.reactivex.Completable;
 import io.reactivex.Observable;
 import timber.log.Timber;
 
-import static android.app.Activity.RESULT_OK;
 import static java.text.DateFormat.getDateInstance;
 
 public class FitnessClient implements GoogleApiClient.ConnectionCallbacks,
@@ -48,52 +42,23 @@ public class FitnessClient implements GoogleApiClient.ConnectionCallbacks,
         void onConnectionFail(Exception e);
     }
 
-    private static final int REQUEST_OAUTH = 1;
-    private boolean authInProgress = false;
     private GoogleApiClient client;
-    private Context context;
-    private Activity activity;
+    private FragmentActivity activity;
     private Callback callback;
-
-    public FitnessClient(Context context) {
-        this.context = context;
-        client = new GoogleApiClient.Builder(context)
-                .addApi(Fitness.HISTORY_API)
-                .addScope(new Scope(Scopes.FITNESS_BODY_READ_WRITE))
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
-    }
 
     /**
      * https://developers.google.com/android/reference/com/google/android/gms/fitness/HistoryApi
      * https://developers.google.com/android/reference/com/google/android/gms/common/Scopes#FITNESS_BODY_READ_WRITE
      */
-    public void onCreate(Activity activity, Callback callback) {
+    public FitnessClient(FragmentActivity activity, Callback callback) {
         this.activity = activity;
         this.callback = callback;
-    }
-
-    public void onStart() {
-        if (client != null) {
-            client.connect();
-        }
-    }
-
-    public void onStop() {
-        if (client != null && client.isConnected()) {
-            client.disconnect();
-        }
-    }
-
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_OAUTH) {
-            authInProgress = false;
-            if (resultCode == RESULT_OK && !client.isConnecting() && !client.isConnected()) {
-                // Make sure the app is not already connected or attempting to connect
-                client.connect();
-            }
-        }
+        this.client = new GoogleApiClient.Builder(activity)
+                .addApi(Fitness.HISTORY_API)
+                .addScope(new Scope(Scopes.FITNESS_BODY_READ_WRITE))
+                .addConnectionCallbacks(this)
+                .enableAutoManage(activity, this)
+                .build();
     }
 
     @Override
@@ -111,24 +76,8 @@ public class FitnessClient implements GoogleApiClient.ConnectionCallbacks,
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Timber.d("onConnectionFailed: " + connectionResult.toString());
-        if (!connectionResult.hasResolution()) {
-            // Show the localized error dialog
-            GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(),
-                    this.activity, 0).show();
-            return;
-        }
-
-        if (!authInProgress) {
-            try {
-                Timber.d("Attempting to resolve failed connection");
-                authInProgress = true;
-                connectionResult.startResolutionForResult(this.activity, REQUEST_OAUTH);
-            } catch (IntentSender.SendIntentException e) {
-                if (callback != null) {
-                    callback.onConnectionFail(e);
-                }
-            }
+        if (callback != null) {
+            callback.onConnectionFail(new IllegalStateException(connectionResult.getErrorMessage()));
         }
     }
 
@@ -191,10 +140,10 @@ public class FitnessClient implements GoogleApiClient.ConnectionCallbacks,
         calendar.setTime(new Date());
 
         DataSource dataSource = new DataSource.Builder()
-                .setAppPackageName(context)
+                .setAppPackageName(activity)
                 .setDataType(DataType.TYPE_WEIGHT)
                 .setType(DataSource.TYPE_DERIVED)
-                .setStreamName(context.getPackageName() + "_weight")
+                .setStreamName(activity.getPackageName() + "_weight")
                 .build();
 
         DataSet dataSet = DataSet.create(dataSource);

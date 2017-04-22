@@ -36,32 +36,13 @@ public class MainActivity extends AppCompatActivity implements
         binding.fab.setOnClickListener(this);
 
         compositeDisposable = new CompositeDisposable();
-        client = ((App) getApplication()).getFitnessClient();
-        client.onCreate(this, this);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        client.onStart();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        client.onStop();
+        client = new FitnessClient(this, this);
     }
 
     @Override
     protected void onDestroy() {
         compositeDisposable.dispose();
         super.onDestroy();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        client.onActivityResult(requestCode, resultCode, data);
     }
 
     // region FitnessClient.Callback
