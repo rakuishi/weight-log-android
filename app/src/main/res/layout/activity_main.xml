@@ -9,20 +9,21 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/dp_88" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/dp_16"
-            android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-            android:src="@drawable/ic_add_white_24dp"
+            android:layout_alignParentRight="true"
+            android:layout_margin="@dimen/dp_16"
             android:clickable="true"
+            android:src="@drawable/ic_add_white_24dp"
             app:borderWidth="@dimen/dp_0"
-            app:elevation="@dimen/dp_4"
-            />
+            app:elevation="@dimen/dp_4" />
 
     </RelativeLayout>
 
