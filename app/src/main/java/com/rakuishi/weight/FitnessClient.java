@@ -20,7 +20,9 @@ import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataSource;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
+import com.google.android.gms.fitness.request.DataDeleteRequest;
 import com.google.android.gms.fitness.request.DataReadRequest;
+import com.google.android.gms.fitness.request.DataUpdateRequest;
 import com.google.android.gms.fitness.result.DataReadResult;
 
 import java.text.DateFormat;
@@ -52,7 +54,6 @@ public class FitnessClient implements GoogleApiClient.ConnectionCallbacks,
     private Context context;
     private Activity activity;
     private Callback callback;
-    private DataSet dataSet;
 
     public FitnessClient(Context context) {
         this.context = context;
@@ -137,8 +138,6 @@ public class FitnessClient implements GoogleApiClient.ConnectionCallbacks,
                     Fitness.HistoryApi.readData(client, getDataReadRequest(amount)).await(1, TimeUnit.MINUTES);
 
             if (dataReadResult.getDataSets().size() == 1) {
-                // Save DataSet for update
-                dataSet = dataReadResult.getDataSets().get(0);
                 e.onNext(reverse(dataReadResult.getDataSets().get(0).getDataPoints()));
                 e.onComplete();
             } else {
@@ -182,7 +181,7 @@ public class FitnessClient implements GoogleApiClient.ConnectionCallbacks,
             if (status.isSuccess()) {
                 e.onComplete();
             } else {
-                e.onError(new IllegalStateException("Failed to insert user's weight data-set."));
+                e.onError(new IllegalStateException(status.getStatusMessage()));
             }
         });
     }
@@ -207,5 +206,26 @@ public class FitnessClient implements GoogleApiClient.ConnectionCallbacks,
         dataSet.add(dataPoint);
 
         return dataSet;
+    }
+
+    // TODO: An app cannot delete data inserted by other apps.
+    public Completable delete(Long millis) {
+        return Completable.create(e -> {
+            Status status = Fitness.HistoryApi.deleteData(client, getDataDeleteRequest(millis))
+                    .await(1, TimeUnit.MINUTES);
+            if (status.isSuccess()) {
+                e.onComplete();
+            } else {
+                e.onError(new IllegalStateException(status.getStatusMessage()));
+            }
+        });
+    }
+
+    private DataDeleteRequest getDataDeleteRequest(Long millis) {
+        // 指定された時刻周辺の DataPoint を削除する。開始時刻と終了時刻を同一にすることは許可されていない
+        return new DataDeleteRequest.Builder()
+                .setTimeInterval(millis, millis + 1L, TimeUnit.MILLISECONDS)
+                .addDataType(DataType.TYPE_WEIGHT)
+                .build();
     }
 }

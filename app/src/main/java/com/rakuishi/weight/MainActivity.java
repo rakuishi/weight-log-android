@@ -11,6 +11,9 @@ import com.evernote.android.state.StateSaver;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.rakuishi.weight.databinding.ActivityMainBinding;
 
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -103,6 +106,18 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onClickDataPoint(DataPoint dataPoint) {
         Timber.d("onClickDataPoint: " + dataPoint.toString());
+
+        /*
+        Disposable disposable = client.delete(dataPoint.getTimestamp(TimeUnit.MILLISECONDS))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.newThread())
+                .subscribe(() -> {
+                    loadFitnessWeight();
+                }, throwable -> {
+                    Timber.d(throwable.getMessage());
+                });
+        compositeDisposable.add(disposable);
+        */
     }
 
     // endregion
