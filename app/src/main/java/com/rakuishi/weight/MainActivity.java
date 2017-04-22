@@ -7,12 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 
-import com.evernote.android.state.StateSaver;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.rakuishi.weight.databinding.ActivityMainBinding;
-
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -23,7 +19,7 @@ import timber.log.Timber;
 public class MainActivity extends AppCompatActivity implements
         FitnessClient.Callback, View.OnClickListener, FitnessWeightAdapter.Callback {
 
-    private FitnessClient client = null;
+    private FitnessClient client;
     private CompositeDisposable compositeDisposable;
     private ActivityMainBinding binding;
     private FitnessWeightAdapter adapter;
@@ -32,7 +28,6 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        StateSaver.restoreInstanceState(this, savedInstanceState);
 
         adapter = new FitnessWeightAdapter(this, this);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -46,15 +41,15 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        client.onResume();
+    protected void onStart() {
+        super.onStart();
+        client.onStart();
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        client.onPause();
+    protected void onStop() {
+        super.onStop();
+        client.onStop();
     }
 
     @Override
@@ -65,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         client.onActivityResult(requestCode, resultCode, data);
     }
 

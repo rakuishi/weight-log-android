@@ -74,13 +74,13 @@ public class FitnessClient implements GoogleApiClient.ConnectionCallbacks,
         this.callback = callback;
     }
 
-    public void onResume() {
+    public void onStart() {
         if (client != null) {
             client.connect();
         }
     }
 
-    public void onPause() {
+    public void onStop() {
         if (client != null && client.isConnected()) {
             client.disconnect();
         }
