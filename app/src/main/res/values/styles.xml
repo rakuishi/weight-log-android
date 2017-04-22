@@ -8,4 +8,14 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="TextInputLayoutStyle">
+        <item name="android:textColorHint">@color/secondary_text</item>
+        <item name="android:textSize">@dimen/sp_16</item>
+    </style>
+
+    <style name="PrimaryTextStyle">
+        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:textSize">@dimen/sp_16</item>
+    </style>
+
 </resources>

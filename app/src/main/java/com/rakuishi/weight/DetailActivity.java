@@ -14,6 +14,7 @@ import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.Field;
 import com.rakuishi.weight.databinding.ActivityDetailBinding;
 
+import java.text.DateFormat;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -21,6 +22,9 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
+
+import static java.text.DateFormat.getDateInstance;
+import static java.text.DateFormat.getTimeInstance;
 
 public class DetailActivity extends AppCompatActivity implements
         FitnessClient.Callback {
@@ -44,12 +48,13 @@ public class DetailActivity extends AppCompatActivity implements
         extractValuesFromIntent(getIntent());
         binding = DataBindingUtil.setContentView(this, R.layout.activity_detail);
 
-        getSupportActionBar().setTitle(R.string.edit);
+        getSupportActionBar().setTitle(R.string.edit_your_weight);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         compositeDisposable = new CompositeDisposable();
         client = new FitnessClient(this, this);
+        updateViewComponents();
     }
 
     @Override
@@ -83,6 +88,20 @@ public class DetailActivity extends AppCompatActivity implements
     @Override
     public void onConnectionSuccess() {
         Timber.d("onConnectionSuccess");
+    }
+
+    @Override
+    public void onConnectionFail(Exception e) {
+        Timber.d("onConnectionFail: " + e.getMessage());
+    }
+
+    // endregion
+
+    // region View
+
+    private void updateViewComponents() {
+        updateDateTimeViewComponents();
+
         Field field = dataPoint.getDataType().getFields().get(0);
         String value = dataPoint.getValue(field).toString();
         binding.weightEditText.setText(value);
@@ -93,9 +112,10 @@ public class DetailActivity extends AppCompatActivity implements
         manager.showSoftInput(binding.weightEditText, InputMethodManager.SHOW_IMPLICIT);
     }
 
-    @Override
-    public void onConnectionFail(Exception e) {
-        Timber.d("onConnectionFail: " + e.getMessage());
+    private void updateDateTimeViewComponents() {
+        long millis = dataPoint.getTimestamp(TimeUnit.MILLISECONDS);
+        binding.dateEditText.setText(getDateInstance().format(millis));
+        binding.timeEditText.setText(getTimeInstance().format(millis));
     }
 
     // endregion

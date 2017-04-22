@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
@@ -8,13 +9,97 @@
         android:orientation="vertical"
         android:padding="@dimen/dp_16">
 
-        <android.support.v7.widget.AppCompatEditText
-            android:id="@+id/weight_edit_text"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="numberDecimal"
-            android:textSize="@dimen/sp_20"
-            tools:text="56" />
+            android:layout_marginBottom="@dimen/dp_16"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/dp_4"
+                android:layout_weight="1"
+                android:hint="@string/date"
+                app:hintAnimationEnabled="false"
+                app:hintTextAppearance="@style/TextInputLayoutStyle">
+
+                <android.support.v7.widget.AppCompatEditText
+                    android:id="@+id/date_edit_text"
+                    style="@style/PrimaryTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:cursorVisible="false"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:inputType="numberDecimal"
+                    android:textSize="@dimen/sp_20"
+                    tools:text="Today" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_4"
+                android:layout_weight="1"
+                android:hint="@string/time"
+                app:hintAnimationEnabled="false"
+                app:hintTextAppearance="@style/TextInputLayoutStyle">
+
+                <android.support.v7.widget.AppCompatEditText
+                    android:id="@+id/time_edit_text"
+                    style="@style/PrimaryTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:cursorVisible="false"
+                    android:editable="false"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:inputType="numberDecimal"
+                    android:textSize="@dimen/sp_20"
+                    tools:text="19:54" />
+
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="@string/weight"
+                app:hintAnimationEnabled="false"
+                app:hintTextAppearance="@style/TextInputLayoutStyle">
+
+                <android.support.v7.widget.AppCompatEditText
+                    android:id="@+id/weight_edit_text"
+                    style="@style/PrimaryTextStyle"
+                    android:layout_width="@dimen/dp_120"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:textSize="@dimen/sp_20"
+                    tools:text="56" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/unit_text_view"
+                style="@style/PrimaryTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_8"
+                android:text="@string/unit_kg" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

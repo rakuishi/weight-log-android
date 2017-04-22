@@ -3,4 +3,9 @@
     <string name="unit_kg">kg</string>
     <string name="save">Save</string>
     <string name="edit">Edit</string>
+    <string name="edit_your_weight">Edit your weight</string>
+    <string name="add_your_weight">Add your weight</string>
+    <string name="weight">Weight</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
 </resources>
