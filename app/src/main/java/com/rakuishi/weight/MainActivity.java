@@ -9,8 +9,6 @@ import android.view.View;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.rakuishi.weight.databinding.ActivityMainBinding;
 
-import java.util.Date;
-
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -65,15 +63,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.fab) {
-            Disposable disposable = client.insert(60.f, new Date().getTime())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeOn(Schedulers.newThread())
-                    .subscribe(() -> {
-                        loadFitnessWeight();
-                    }, throwable -> {
-                        Timber.d(throwable.getMessage());
-                    });
-            compositeDisposable.add(disposable);
+            startActivity(EditActivity.create(this));
         }
     }
 
@@ -83,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onClickDataPoint(DataPoint dataPoint) {
-        startActivity(DetailActivity.create(this, dataPoint));
+        startActivity(EditActivity.create(this, dataPoint));
 
         /*
         Disposable disposable = client.delete(dataPoint.getTimestamp(TimeUnit.MILLISECONDS))

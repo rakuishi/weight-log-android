@@ -9,14 +9,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.Field;
-import com.rakuishi.weight.databinding.ActivityDetailBinding;
+import com.rakuishi.weight.databinding.ActivityEditBinding;
 
-import java.text.DateFormat;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -26,17 +28,21 @@ import timber.log.Timber;
 import static java.text.DateFormat.getDateInstance;
 import static java.text.DateFormat.getTimeInstance;
 
-public class DetailActivity extends AppCompatActivity implements
-        FitnessClient.Callback {
+public class EditActivity extends AppCompatActivity implements FitnessClient.Callback {
 
     private final static String KEY_DATA_POINT = "dataPoint";
     private CompositeDisposable compositeDisposable;
-    private ActivityDetailBinding binding;
+    private ActivityEditBinding binding;
     private FitnessClient client;
     private DataPoint dataPoint;
+    private long timestamp;
+
+    public static Intent create(Context context) {
+        return new Intent(context, EditActivity.class);
+    }
 
     public static Intent create(Context context, DataPoint dataPoint) {
-        Intent intent = new Intent(context, DetailActivity.class);
+        Intent intent = new Intent(context, EditActivity.class);
         intent.putExtra(KEY_DATA_POINT, dataPoint);
         return intent;
     }
@@ -46,15 +52,23 @@ public class DetailActivity extends AppCompatActivity implements
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         extractValuesFromIntent(getIntent());
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_detail);
+        timestamp = (dataPoint == null) ? (new Date()).getTime() : dataPoint.getTimestamp(TimeUnit.MILLISECONDS);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_edit);
 
-        getSupportActionBar().setTitle(R.string.edit_your_weight);
+        getSupportActionBar().setTitle(dataPoint == null ? R.string.add_your_weight : R.string.edit_your_weight);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         compositeDisposable = new CompositeDisposable();
         client = new FitnessClient(this, this);
         updateViewComponents();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
     }
 
     @Override
@@ -102,44 +116,48 @@ public class DetailActivity extends AppCompatActivity implements
     private void updateViewComponents() {
         updateDateTimeViewComponents();
 
-        Field field = dataPoint.getDataType().getFields().get(0);
-        String value = dataPoint.getValue(field).toString();
+        String value = "";
+        if (dataPoint != null) {
+            Field field = dataPoint.getDataType().getFields().get(0);
+            value = dataPoint.getValue(field).toString();
+        }
+
         binding.weightEditText.setText(value);
         binding.weightEditText.setHint(value);
         binding.weightEditText.setSelection(0, value.length());
 
         InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        manager.showSoftInput(binding.weightEditText, InputMethodManager.SHOW_IMPLICIT);
+        manager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
 
     private void updateDateTimeViewComponents() {
-        long millis = dataPoint.getTimestamp(TimeUnit.MILLISECONDS);
-        binding.dateEditText.setText(getDateInstance().format(millis));
-        binding.timeEditText.setText(getTimeInstance().format(millis));
+        binding.dateEditText.setText(getDateInstance().format(timestamp));
+        binding.timeEditText.setText(getTimeInstance().format(timestamp));
     }
 
     // endregion
 
     private void extractValuesFromIntent(Intent intent) {
-        if (!intent.hasExtra(KEY_DATA_POINT)) {
-            // something happened
-            finish();
+        if (intent.hasExtra(KEY_DATA_POINT)) {
+            dataPoint = intent.getParcelableExtra(KEY_DATA_POINT);
         }
-
-        dataPoint = getIntent().getParcelableExtra(KEY_DATA_POINT);
     }
 
     private void save() {
-        // do something
+        // TODO: validate weight value
         float weight = Float.valueOf(binding.weightEditText.getText().toString());
 
-        Disposable disposable = client.update(weight, dataPoint.getTimestamp(TimeUnit.MILLISECONDS))
+        Completable completable = dataPoint == null
+                ? client.insert(weight, timestamp)
+                : client.update(weight, timestamp);
+
+        Disposable disposable = completable
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.newThread())
                 .subscribe(() -> {
                     finish();
                 }, throwable -> {
-                    Timber.d(throwable.getMessage());
+                    Toast.makeText(this, throwable.getMessage(), Toast.LENGTH_LONG).show();
                 });
         compositeDisposable.add(disposable);
     }
