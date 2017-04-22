@@ -14,7 +14,12 @@ import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.Field;
 import com.rakuishi.weight.databinding.ActivityDetailBinding;
 
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class DetailActivity extends AppCompatActivity implements
@@ -106,5 +111,16 @@ public class DetailActivity extends AppCompatActivity implements
 
     private void save() {
         // do something
+        float weight = Float.valueOf(binding.weightEditText.getText().toString());
+
+        Disposable disposable = client.update(weight, dataPoint.getTimestamp(TimeUnit.MILLISECONDS))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.newThread())
+                .subscribe(() -> {
+                    finish();
+                }, throwable -> {
+                    Timber.d(throwable.getMessage());
+                });
+        compositeDisposable.add(disposable);
     }
 }

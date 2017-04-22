@@ -1,6 +1,5 @@
 package com.rakuishi.weight;
 
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +8,8 @@ import android.view.View;
 
 import com.google.android.gms.fitness.data.DataPoint;
 import com.rakuishi.weight.databinding.ActivityMainBinding;
+
+import java.util.Date;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -64,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.fab) {
-            Disposable disposable = client.insert(60.f)
+            Disposable disposable = client.insert(60.f, new Date().getTime())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.newThread())
                     .subscribe(() -> {

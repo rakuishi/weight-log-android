@@ -123,9 +123,9 @@ public class FitnessClient implements GoogleApiClient.ConnectionCallbacks,
         return reverseDataPoints;
     }
 
-    public Completable insert(float weight) {
+    public Completable insert(float weight, long millis) {
         return Completable.create(e -> {
-            Status status = Fitness.HistoryApi.insertData(client, getInsertDataSet(weight))
+            Status status = Fitness.HistoryApi.insertData(client, getInsertDataSet(weight, millis))
                     .await(1, TimeUnit.MINUTES);
             if (status.isSuccess()) {
                 e.onComplete();
@@ -135,10 +135,7 @@ public class FitnessClient implements GoogleApiClient.ConnectionCallbacks,
         });
     }
 
-    private DataSet getInsertDataSet(float weight) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-
+    private DataSet getInsertDataSet(float weight, long millis) {
         DataSource dataSource = new DataSource.Builder()
                 .setAppPackageName(activity)
                 .setDataType(DataType.TYPE_WEIGHT)
@@ -149,7 +146,7 @@ public class FitnessClient implements GoogleApiClient.ConnectionCallbacks,
         DataSet dataSet = DataSet.create(dataSource);
 
         DataPoint dataPoint = dataSet.createDataPoint()
-                .setTimestamp(calendar.getTimeInMillis(), TimeUnit.MILLISECONDS);
+                .setTimestamp(millis, TimeUnit.MILLISECONDS);
         dataPoint.getValue(Field.FIELD_WEIGHT).setFloat(weight);
 
         dataSet.add(dataPoint);
@@ -176,5 +173,24 @@ public class FitnessClient implements GoogleApiClient.ConnectionCallbacks,
                 .setTimeInterval(millis, millis + 1L, TimeUnit.MILLISECONDS)
                 .addDataType(DataType.TYPE_WEIGHT)
                 .build();
+    }
+
+    public Completable update(float weight, Long millis) {
+        return Completable.create(e -> {
+            Status status1 = Fitness.HistoryApi.deleteData(client, getDataDeleteRequest(millis))
+                    .await(1, TimeUnit.MINUTES);
+            if (!status1.isSuccess()) {
+                e.onError(new IllegalStateException(status1.getStatusMessage()));
+                return;
+            }
+
+            Status status2 = Fitness.HistoryApi.insertData(client, getInsertDataSet(weight, millis))
+                    .await(1, TimeUnit.MINUTES);
+            if (!status2.isSuccess()) {
+                e.onError(new IllegalStateException(status2.getStatusMessage()));
+            } else {
+                e.onComplete();
+            }
+        });
     }
 }
