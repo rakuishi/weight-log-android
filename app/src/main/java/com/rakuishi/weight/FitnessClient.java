@@ -86,11 +86,12 @@ public class FitnessClient implements GoogleApiClient.ConnectionCallbacks,
             DataReadResult dataReadResult =
                     Fitness.HistoryApi.readData(client, getDataReadRequest(amount)).await(1, TimeUnit.MINUTES);
 
-            if (dataReadResult.getDataSets().size() == 1) {
+            if (dataReadResult.getDataSets().size() == 1
+                    && dataReadResult.getDataSets().get(0).getDataType().equals(DataType.TYPE_WEIGHT)) {
                 e.onNext(reverse(dataReadResult.getDataSets().get(0).getDataPoints()));
                 e.onComplete();
             } else {
-                e.onError(new IllegalStateException("Failed to find user's weight data-points."));
+                e.onError(new IllegalStateException("Failed to find user's weight data."));
             }
         });
     }
