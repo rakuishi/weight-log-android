@@ -6,6 +6,9 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.Field;
@@ -30,10 +33,15 @@ public class DetailActivity extends AppCompatActivity implements
     }
 
     @Override
+    @SuppressWarnings("ConstantConditions")
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         extractValuesFromIntent(getIntent());
         binding = DataBindingUtil.setContentView(this, R.layout.activity_detail);
+
+        getSupportActionBar().setTitle(R.string.edit);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         compositeDisposable = new CompositeDisposable();
         client = ((App) getApplication()).getFitnessClient();
@@ -64,13 +72,39 @@ public class DetailActivity extends AppCompatActivity implements
         client.onActivityResult(requestCode, resultCode, data);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_detail, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+            case R.id.save:
+                save();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     // region FitnessClient.Callback
 
     @Override
     public void onConnectionSuccess() {
         Timber.d("onConnectionSuccess");
         Field field = dataPoint.getDataType().getFields().get(0);
-        binding.weightEditText.setText(dataPoint.getValue(field).toString());
+        String value = dataPoint.getValue(field).toString();
+        binding.weightEditText.setText(value);
+        binding.weightEditText.setHint(value);
+        binding.weightEditText.setSelection(0, value.length());
+
+        InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        manager.showSoftInput(binding.weightEditText, InputMethodManager.SHOW_IMPLICIT);
     }
 
     @Override
@@ -87,5 +121,9 @@ public class DetailActivity extends AppCompatActivity implements
         }
 
         dataPoint = getIntent().getParcelableExtra(KEY_DATA_POINT);
+    }
+
+    private void save() {
+        // do something
     }
 }
