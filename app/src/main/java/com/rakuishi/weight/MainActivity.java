@@ -1,20 +1,14 @@
 package com.rakuishi.weight;
 
 import android.content.Intent;
-import android.content.IntentSender;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 
-import com.evernote.android.state.State;
 import com.evernote.android.state.StateSaver;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.fitness.data.DataPoint;
 import com.rakuishi.weight.databinding.ActivityMainBinding;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -24,15 +18,9 @@ import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
-        View.OnClickListener {
+        FitnessClient.Callback, View.OnClickListener, FitnessWeightAdapter.Callback {
 
-    private static final int REQUEST_OAUTH = 1;
-
-    @State
-    boolean authInProgress = false;
-
-    private GoogleApiClient client = null;
+    private FitnessClient client = null;
     private CompositeDisposable compositeDisposable;
     private ActivityMainBinding binding;
     private FitnessWeightAdapter adapter;
@@ -43,28 +31,27 @@ public class MainActivity extends AppCompatActivity implements
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         StateSaver.restoreInstanceState(this, savedInstanceState);
 
-        adapter = new FitnessWeightAdapter(this);
+        adapter = new FitnessWeightAdapter(this, this);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerView.addItemDecoration(new DividerItemDecoration(getResources()));
         binding.recyclerView.setAdapter(adapter);
         binding.fab.setOnClickListener(this);
 
         compositeDisposable = new CompositeDisposable();
-        client = FitnessWeightHelper.buildGoogleApiClient(this, this, this);
+        client = ((App) getApplication()).getFitnessClient();
+        client.onCreate(this, this);
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        client.connect();
+    protected void onResume() {
+        super.onResume();
+        client.onResume();
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        if (client.isConnected()) {
-            client.disconnect();
-        }
+    protected void onPause() {
+        super.onPause();
+        client.onPause();
     }
 
     @Override
@@ -75,56 +62,19 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_OAUTH) {
-            authInProgress = false;
-            if (resultCode == RESULT_OK && !client.isConnecting() && !client.isConnected()) {
-                // Make sure the app is not already connected or attempting to connect
-                client.connect();
-            }
-        }
+        client.onActivityResult(requestCode, resultCode, data);
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        StateSaver.restoreInstanceState(this, outState);
-    }
-
-    // region GoogleApiClient.ConnectionCallbacks
+    // region FitnessClient.Callback
 
     @Override
-    public void onConnected(@Nullable Bundle bundle) {
+    public void onConnectionSuccess() {
         loadFitnessWeight();
     }
 
     @Override
-    public void onConnectionSuspended(int i) {
-        Timber.d("onConnectionSuspended");
-    }
-
-    // endregion
-
-    // region GoogleApiClient.OnConnectionFailedListener
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Timber.d("onConnectionFailed: " + connectionResult.toString());
-        if (!connectionResult.hasResolution()) {
-            // Show the localized error dialog
-            GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(),
-                    MainActivity.this, 0).show();
-            return;
-        }
-
-        if (!authInProgress) {
-            try {
-                Timber.d("Attempting to resolve failed connection");
-                authInProgress = true;
-                connectionResult.startResolutionForResult(MainActivity.this, REQUEST_OAUTH);
-            } catch (IntentSender.SendIntentException e) {
-                Timber.d(e.getMessage());
-            }
-        }
+    public void onConnectionFail(Exception e) {
+        Timber.d("onConnectionFail: " + e.getMessage());
     }
 
     // endregion
@@ -134,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.fab) {
-            Disposable disposable = FitnessWeightHelper.insert(MainActivity.this, client, 60.f)
+            Disposable disposable = client.insert(60.f)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.newThread())
                     .subscribe(() -> {
@@ -148,8 +98,17 @@ public class MainActivity extends AppCompatActivity implements
 
     // endregion
 
+    // region FitnessWeightAdapter.Callback
+
+    @Override
+    public void onClickDataPoint(DataPoint dataPoint) {
+        Timber.d("onClickDataPoint: " + dataPoint.toString());
+    }
+
+    // endregion
+
     private void loadFitnessWeight() {
-        Disposable disposable = FitnessWeightHelper.find(client, 3)
+        Disposable disposable = client.find(3)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.newThread())
                 .subscribe(dataPoints -> adapter.setDataPoints(dataPoints));

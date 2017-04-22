@@ -20,13 +20,19 @@ import static java.text.DateFormat.getDateInstance;
 
 public class FitnessWeightAdapter extends RecyclerView.Adapter<FitnessWeightAdapter.ViewHolder> {
 
+    public interface Callback {
+        void onClickDataPoint(DataPoint dataPoint);
+    }
+
     private Context context;
     private LayoutInflater inflater;
     private List<DataPoint> dataPoints = new ArrayList<>();
     private DateFormat dateFormat = getDateInstance();
+    private Callback callback;
 
-    public FitnessWeightAdapter(Context context) {
+    public FitnessWeightAdapter(Context context, Callback callback) {
         this.context = context;
+        this.callback = callback;
         inflater = LayoutInflater.from(context);
     }
 
@@ -45,6 +51,7 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<FitnessWeightAdap
             Field field = dataPoint.getDataType().getFields().get(0);
             holder.weightTextView.setText(dataPoint.getValue(field).toString() + context.getString(R.string.unit_kg));
             holder.dateTextView.setText(dateFormat.format(dataPoint.getTimestamp(TimeUnit.MILLISECONDS)));
+            holder.itemView.setOnClickListener(v -> callback.onClickDataPoint(dataPoint));
         }
     }
 
