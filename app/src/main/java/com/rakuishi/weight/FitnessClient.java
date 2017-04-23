@@ -81,6 +81,10 @@ public class FitnessClient implements GoogleApiClient.ConnectionCallbacks,
         }
     }
 
+    public boolean isConnected() {
+        return client.isConnected();
+    }
+
     public Observable<List<DataPoint>> find(int amount) {
         return Observable.create(e -> {
             DataReadResult dataReadResult =
@@ -155,7 +159,14 @@ public class FitnessClient implements GoogleApiClient.ConnectionCallbacks,
         return dataSet;
     }
 
-    // TODO: An app cannot delete data inserted by other apps.
+    /**
+     * > An app cannot update data inserted by other apps.
+     * https://developers.google.com/fit/android/history
+     */
+    public boolean isEditable(DataPoint dataPoint) {
+        return dataPoint.getOriginalDataSource().getAppPackageName().equals(activity.getPackageName());
+    }
+
     public Completable delete(Long millis) {
         return Completable.create(e -> {
             Status status = Fitness.HistoryApi.deleteData(client, getDataDeleteRequest(millis))

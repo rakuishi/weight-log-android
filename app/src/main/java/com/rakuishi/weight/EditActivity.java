@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
@@ -36,6 +37,7 @@ public class EditActivity extends AppCompatActivity implements FitnessClient.Cal
     private FitnessClient client;
     private DataPoint dataPoint;
     private long timestamp;
+    private boolean isEditable;
 
     public static Intent create(Context context) {
         return new Intent(context, EditActivity.class);
@@ -51,9 +53,11 @@ public class EditActivity extends AppCompatActivity implements FitnessClient.Cal
     @SuppressWarnings("ConstantConditions")
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        extractValuesFromIntent(getIntent());
-        timestamp = (dataPoint == null) ? (new Date()).getTime() : dataPoint.getTimestamp(TimeUnit.MILLISECONDS);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_edit);
+
+        extractValuesFromIntent(getIntent());
+        isEditable = (dataPoint == null);
+        timestamp = (dataPoint == null) ? (new Date()).getTime() : dataPoint.getTimestamp(TimeUnit.MILLISECONDS);
 
         getSupportActionBar().setTitle(dataPoint == null ? R.string.add_your_weight : R.string.edit_your_weight);
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -61,14 +65,19 @@ public class EditActivity extends AppCompatActivity implements FitnessClient.Cal
 
         compositeDisposable = new CompositeDisposable();
         client = new FitnessClient(this, this);
-        updateViewComponents();
+
+        setupViewComponents();
+        updateViewComponentsStatus();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
+        if (getCurrentFocus() != null) {
+            InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
     }
 
     @Override
@@ -80,6 +89,7 @@ public class EditActivity extends AppCompatActivity implements FitnessClient.Cal
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_detail, menu);
+        menu.findItem(R.id.save).setEnabled(isEditable && client.isConnected());
         return true;
     }
 
@@ -101,7 +111,9 @@ public class EditActivity extends AppCompatActivity implements FitnessClient.Cal
 
     @Override
     public void onConnectionSuccess() {
-        Timber.d("onConnectionSuccess");
+        isEditable = dataPoint == null || client.isEditable(dataPoint);
+        invalidateOptionsMenu();
+        updateViewComponentsStatus();
     }
 
     @Override
@@ -113,9 +125,7 @@ public class EditActivity extends AppCompatActivity implements FitnessClient.Cal
 
     // region View
 
-    private void updateViewComponents() {
-        updateDateTimeViewComponents();
-
+    private void setupViewComponents() {
         String value = "";
         if (dataPoint != null) {
             Field field = dataPoint.getDataType().getFields().get(0);
@@ -126,13 +136,22 @@ public class EditActivity extends AppCompatActivity implements FitnessClient.Cal
         binding.weightEditText.setHint(value);
         binding.weightEditText.setSelection(0, value.length());
 
-        InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        manager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-    }
-
-    private void updateDateTimeViewComponents() {
         binding.dateEditText.setText(getDateInstance().format(timestamp));
         binding.timeEditText.setText(getTimeInstance().format(timestamp));
+    }
+
+    private void updateViewComponentsStatus() {
+        binding.noteTextView.setVisibility(isEditable ? View.GONE : View.VISIBLE);
+        binding.weightEditText.setFocusable(isEditable);
+        binding.weightEditText.setClickable(isEditable);
+        binding.weightEditText.setFocusableInTouchMode(isEditable);
+        binding.weightEditText.setCursorVisible(isEditable);
+
+        if (isEditable) {
+            binding.weightEditText.requestFocus();
+            InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            manager.showSoftInput(binding.weightEditText, InputMethodManager.SHOW_FORCED);
+        }
     }
 
     // endregion

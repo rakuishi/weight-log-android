@@ -70,6 +70,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dp_16"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -100,6 +101,15 @@
                 android:text="@string/unit_kg" />
 
         </LinearLayout>
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/note_text_view"
+            style="@style/SecondaryTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/note_update_or_delete_data"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
     </LinearLayout>
 
