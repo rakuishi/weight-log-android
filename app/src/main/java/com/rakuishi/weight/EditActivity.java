@@ -89,7 +89,15 @@ public class EditActivity extends AppCompatActivity implements FitnessClient.Cal
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_detail, menu);
-        menu.findItem(R.id.save).setEnabled(isEditable && client.isConnected());
+        boolean enabled = isEditable && client.isConnected();
+        menu.findItem(R.id.save).setEnabled(enabled);
+
+        if (dataPoint == null) {
+            menu.findItem(R.id.delete).setVisible(false);
+        } else {
+            menu.findItem(R.id.delete).setVisible(true);
+            menu.findItem(R.id.delete).setEnabled(enabled);
+        }
         return true;
     }
 
@@ -101,6 +109,9 @@ public class EditActivity extends AppCompatActivity implements FitnessClient.Cal
                 break;
             case R.id.save:
                 save();
+                break;
+            case R.id.delete:
+                delete();
                 break;
         }
 
@@ -169,6 +180,20 @@ public class EditActivity extends AppCompatActivity implements FitnessClient.Cal
         Completable completable = dataPoint == null
                 ? client.insert(weight, timestamp)
                 : client.update(weight, timestamp);
+
+        Disposable disposable = completable
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.newThread())
+                .subscribe(() -> {
+                    finish();
+                }, throwable -> {
+                    Toast.makeText(this, throwable.getMessage(), Toast.LENGTH_LONG).show();
+                });
+        compositeDisposable.add(disposable);
+    }
+
+    private void delete() {
+        Completable completable = client.delete(timestamp);
 
         Disposable disposable = completable
                 .observeOn(AndroidSchedulers.mainThread())
