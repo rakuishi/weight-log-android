@@ -161,7 +161,7 @@ public class EditActivity extends AppCompatActivity implements FitnessClient.Cal
         if (isEditable) {
             binding.weightEditText.requestFocus();
             InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            manager.showSoftInput(binding.weightEditText, InputMethodManager.SHOW_FORCED);
+            manager.showSoftInput(binding.weightEditText, InputMethodManager.SHOW_IMPLICIT);
         }
     }
 
