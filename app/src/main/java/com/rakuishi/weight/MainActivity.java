@@ -74,18 +74,6 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onClickDataPoint(DataPoint dataPoint) {
         startActivity(EditActivity.create(this, dataPoint));
-
-        /*
-        Disposable disposable = client.delete(dataPoint.getTimestamp(TimeUnit.MILLISECONDS))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.newThread())
-                .subscribe(() -> {
-                    loadFitnessWeight();
-                }, throwable -> {
-                    Timber.d(throwable.getMessage());
-                });
-        compositeDisposable.add(disposable);
-        */
     }
 
     // endregion

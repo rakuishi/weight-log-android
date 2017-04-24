@@ -12,7 +12,6 @@ import com.google.android.gms.fitness.data.Field;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
