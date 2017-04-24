@@ -26,6 +26,14 @@
             app:borderWidth="@dimen/dp_0"
             app:elevation="@dimen/dp_4" />
 
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/horizontal_progressbar_negative_padding"
+            android:indeterminate="true" />
+
     </RelativeLayout>
 
 </layout>

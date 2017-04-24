@@ -12,4 +12,6 @@
     <dimen name="sp_16">16sp</dimen>
     <dimen name="sp_20">20sp</dimen>
 
+    <dimen name="horizontal_progressbar_negative_padding">-7dp</dimen>
+
 </resources>

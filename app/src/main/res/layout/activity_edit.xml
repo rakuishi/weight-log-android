@@ -3,114 +3,133 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="@dimen/dp_16">
+        android:layout_height="match_parent">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/dp_16"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:layout_height="match_parent">
 
-            <android.support.design.widget.TextInputLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/dp_4"
-                android:layout_weight="1"
-                android:hint="@string/date"
-                app:hintAnimationEnabled="false"
-                app:hintTextAppearance="@style/TextInputLayoutStyle">
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="@dimen/dp_16">
 
-                <android.support.v7.widget.AppCompatEditText
-                    android:id="@+id/date_edit_text"
-                    style="@style/PrimaryTextStyle"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:clickable="false"
-                    android:cursorVisible="false"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"
-                    android:inputType="numberDecimal"
-                    android:textSize="@dimen/sp_20"
-                    tools:text="Today" />
+                    android:layout_marginBottom="@dimen/dp_16"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-            </android.support.design.widget.TextInputLayout>
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/dp_4"
+                        android:layout_weight="1"
+                        android:hint="@string/date"
+                        app:hintAnimationEnabled="false"
+                        app:hintTextAppearance="@style/TextInputLayoutStyle">
 
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/dp_4"
-                android:layout_weight="1"
-                android:hint="@string/time"
-                app:hintAnimationEnabled="false"
-                app:hintTextAppearance="@style/TextInputLayoutStyle">
+                        <android.support.v7.widget.AppCompatEditText
+                            android:id="@+id/date_edit_text"
+                            style="@style/PrimaryTextStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:clickable="false"
+                            android:cursorVisible="false"
+                            android:focusable="false"
+                            android:focusableInTouchMode="false"
+                            android:inputType="numberDecimal"
+                            android:textSize="@dimen/sp_20"
+                            tools:text="Today" />
 
-                <android.support.v7.widget.AppCompatEditText
-                    android:id="@+id/time_edit_text"
-                    style="@style/PrimaryTextStyle"
+                    </android.support.design.widget.TextInputLayout>
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dp_4"
+                        android:layout_weight="1"
+                        android:hint="@string/time"
+                        app:hintAnimationEnabled="false"
+                        app:hintTextAppearance="@style/TextInputLayoutStyle">
+
+                        <android.support.v7.widget.AppCompatEditText
+                            android:id="@+id/time_edit_text"
+                            style="@style/PrimaryTextStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:clickable="false"
+                            android:cursorVisible="false"
+                            android:focusable="false"
+                            android:focusableInTouchMode="false"
+                            android:inputType="numberDecimal"
+                            android:textSize="@dimen/sp_20"
+                            tools:text="19:54" />
+
+                    </android.support.design.widget.TextInputLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/dp_16"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/weight"
+                        app:hintAnimationEnabled="false"
+                        app:hintTextAppearance="@style/TextInputLayoutStyle">
+
+                        <android.support.v7.widget.AppCompatEditText
+                            android:id="@+id/weight_edit_text"
+                            style="@style/PrimaryTextStyle"
+                            android:layout_width="@dimen/dp_120"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberDecimal"
+                            android:textSize="@dimen/sp_20"
+                            tools:text="56" />
+
+                    </android.support.design.widget.TextInputLayout>
+
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/unit_text_view"
+                        style="@style/PrimaryTextStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_8"
+                        android:text="@string/unit_kg" />
+
+                </LinearLayout>
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/note_text_view"
+                    style="@style/SecondaryTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:clickable="false"
-                    android:cursorVisible="false"
-                    android:editable="false"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"
-                    android:inputType="numberDecimal"
-                    android:textSize="@dimen/sp_20"
-                    tools:text="19:54" />
+                    android:text="@string/note_update_or_delete_data"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
 
-            </android.support.design.widget.TextInputLayout>
+            </LinearLayout>
 
-        </LinearLayout>
+        </ScrollView>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/dp_16"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:hint="@string/weight"
-                app:hintAnimationEnabled="false"
-                app:hintTextAppearance="@style/TextInputLayoutStyle">
-
-                <android.support.v7.widget.AppCompatEditText
-                    android:id="@+id/weight_edit_text"
-                    style="@style/PrimaryTextStyle"
-                    android:layout_width="@dimen/dp_120"
-                    android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    android:textSize="@dimen/sp_20"
-                    tools:text="56" />
-
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/unit_text_view"
-                style="@style/PrimaryTextStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_8"
-                android:text="@string/unit_kg" />
-
-        </LinearLayout>
-
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/note_text_view"
-            style="@style/SecondaryTextStyle"
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/note_update_or_delete_data"
-            android:visibility="gone"
-            tools:visibility="visible" />
+            android:layout_marginTop="@dimen/horizontal_progressbar_negative_padding"
+            android:indeterminate="true" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </layout>

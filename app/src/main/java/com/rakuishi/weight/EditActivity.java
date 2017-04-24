@@ -157,6 +157,7 @@ public class EditActivity extends AppCompatActivity implements FitnessClient.Cal
         binding.weightEditText.setClickable(isEditable);
         binding.weightEditText.setFocusableInTouchMode(isEditable);
         binding.weightEditText.setCursorVisible(isEditable);
+        binding.progressBar.setVisibility(View.GONE);
 
         if (isEditable) {
             binding.weightEditText.requestFocus();

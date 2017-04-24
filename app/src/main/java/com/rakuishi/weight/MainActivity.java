@@ -82,7 +82,10 @@ public class MainActivity extends AppCompatActivity implements
         Disposable disposable = client.find(3)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.newThread())
-                .subscribe(dataPoints -> adapter.setDataPoints(dataPoints));
+                .subscribe(dataPoints -> {
+                    binding.progressBar.setVisibility(View.GONE);
+                    adapter.setDataPoints(dataPoints);
+                });
         compositeDisposable.add(disposable);
     }
 }
