@@ -98,6 +98,7 @@ public class EditActivity extends AppCompatActivity implements FitnessClient.Cal
             menu.findItem(R.id.delete).setVisible(true);
             menu.findItem(R.id.delete).setEnabled(enabled);
         }
+
         return true;
     }
 
