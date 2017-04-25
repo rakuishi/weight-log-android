@@ -41,6 +41,7 @@ public class EditActivity extends AppCompatActivity implements FitnessClient.Cal
     private ActivityEditBinding binding;
     private FitnessClient client;
     private DataPoint dataPoint;
+    private long timestamp;
     private LocalDateTime localDateTime;
     private boolean isEditable;
 
@@ -62,7 +63,7 @@ public class EditActivity extends AppCompatActivity implements FitnessClient.Cal
 
         extractValuesFromIntent(getIntent());
         isEditable = (dataPoint == null);
-        long timestamp = (dataPoint == null) ? (new Date()).getTime() : dataPoint.getTimestamp(TimeUnit.MILLISECONDS);
+        timestamp = (dataPoint == null) ? (new Date()).getTime() : dataPoint.getTimestamp(TimeUnit.MILLISECONDS);
         localDateTime = LocalDateTimeUtil.from(timestamp);
 
         getSupportActionBar().setTitle(dataPoint == null ? R.string.add_your_weight : R.string.edit_your_weight);
@@ -222,11 +223,12 @@ public class EditActivity extends AppCompatActivity implements FitnessClient.Cal
     private void save() {
         // TODO: validate weight value
         float weight = Float.valueOf(binding.weightEditText.getText().toString());
-        long timestamp = LocalDateTimeUtil.toEpochMilli(localDateTime);
+        // TODO: validate epochMilli value. Do not set future time
+        long epochMilli = LocalDateTimeUtil.toEpochMilli(localDateTime);
 
         Completable completable = dataPoint == null
-                ? client.insert(weight, timestamp)
-                : client.update(weight, timestamp);
+                ? client.insert(weight, epochMilli)
+                : client.update(weight, timestamp, epochMilli);
 
         Disposable disposable = completable
                 .observeOn(AndroidSchedulers.mainThread())

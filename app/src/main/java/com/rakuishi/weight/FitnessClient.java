@@ -187,7 +187,7 @@ public class FitnessClient implements GoogleApiClient.ConnectionCallbacks,
                 .build();
     }
 
-    public Completable update(float weight, Long millis) {
+    public Completable update(float weight, Long millis, Long updatedMillis) {
         return Completable.create(e -> {
             Status status1 = Fitness.HistoryApi.deleteData(client, getDataDeleteRequest(millis))
                     .await(1, TimeUnit.MINUTES);
@@ -196,7 +196,7 @@ public class FitnessClient implements GoogleApiClient.ConnectionCallbacks,
                 return;
             }
 
-            Status status2 = Fitness.HistoryApi.insertData(client, getInsertDataSet(weight, millis))
+            Status status2 = Fitness.HistoryApi.insertData(client, getInsertDataSet(weight, updatedMillis))
                     .await(1, TimeUnit.MINUTES);
             if (!status2.isSuccess()) {
                 e.onError(new IllegalStateException(status2.getStatusMessage()));
