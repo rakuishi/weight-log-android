@@ -1,20 +1,27 @@
 package com.rakuishi.weight;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.DatePicker;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.Field;
 import com.rakuishi.weight.databinding.ActivityEditBinding;
+
+import org.threeten.bp.LocalDateTime;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -26,17 +33,15 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
-import static java.text.DateFormat.getDateInstance;
-import static java.text.DateFormat.getTimeInstance;
-
-public class EditActivity extends AppCompatActivity implements FitnessClient.Callback {
+public class EditActivity extends AppCompatActivity implements FitnessClient.Callback,
+        View.OnClickListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
 
     private final static String KEY_DATA_POINT = "dataPoint";
     private CompositeDisposable compositeDisposable;
     private ActivityEditBinding binding;
     private FitnessClient client;
     private DataPoint dataPoint;
-    private long timestamp;
+    private LocalDateTime localDateTime;
     private boolean isEditable;
 
     public static Intent create(Context context) {
@@ -57,7 +62,8 @@ public class EditActivity extends AppCompatActivity implements FitnessClient.Cal
 
         extractValuesFromIntent(getIntent());
         isEditable = (dataPoint == null);
-        timestamp = (dataPoint == null) ? (new Date()).getTime() : dataPoint.getTimestamp(TimeUnit.MILLISECONDS);
+        long timestamp = (dataPoint == null) ? (new Date()).getTime() : dataPoint.getTimestamp(TimeUnit.MILLISECONDS);
+        localDateTime = LocalDateTimeUtil.from(timestamp);
 
         getSupportActionBar().setTitle(dataPoint == null ? R.string.add_your_weight : R.string.edit_your_weight);
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -66,7 +72,7 @@ public class EditActivity extends AppCompatActivity implements FitnessClient.Cal
         compositeDisposable = new CompositeDisposable();
         client = new FitnessClient(this, this);
 
-        setupViewComponents();
+        updateViewComponents();
         updateViewComponentsStatus();
     }
 
@@ -135,11 +141,47 @@ public class EditActivity extends AppCompatActivity implements FitnessClient.Cal
 
     // endregion
 
+    // region View.OnClickListener
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.date_edit_text: {
+                DatePickerDialogFragment fragment = DatePickerDialogFragment.newInstance(localDateTime);
+                fragment.show(getSupportFragmentManager(), fragment.getTag());
+                break;
+            }
+            case R.id.time_edit_text: {
+                TimePickerDialogFragment fragment = TimePickerDialogFragment.newInstance(localDateTime);
+                fragment.show(getSupportFragmentManager(), fragment.getTag());
+                break;
+            }
+        }
+    }
+
+    // endregion
+
+    // region Picker
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        localDateTime = localDateTime.withYear(year).withMonth(month).withDayOfMonth(dayOfMonth);
+        updateViewComponents();
+    }
+
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        localDateTime = localDateTime.withHour(hourOfDay).withMinute(minute);
+        updateViewComponents();
+    }
+
+    // endregion
+
     // region View
 
-    private void setupViewComponents() {
-        String value = "";
-        if (dataPoint != null) {
+    private void updateViewComponents() {
+        String value = binding.weightEditText.getText().toString();
+        if (TextUtils.isEmpty(value) && dataPoint != null) {
             Field field = dataPoint.getDataType().getFields().get(0);
             value = dataPoint.getValue(field).toString();
         }
@@ -148,8 +190,8 @@ public class EditActivity extends AppCompatActivity implements FitnessClient.Cal
         binding.weightEditText.setHint(value);
         binding.weightEditText.setSelection(0, value.length());
 
-        binding.dateEditText.setText(getDateInstance().format(timestamp));
-        binding.timeEditText.setText(getTimeInstance().format(timestamp));
+        binding.dateEditText.setText(LocalDateTimeUtil.formatLocalizedDate(localDateTime));
+        binding.timeEditText.setText(LocalDateTimeUtil.formatLocalizedTime(localDateTime));
     }
 
     private void updateViewComponentsStatus() {
@@ -164,6 +206,8 @@ public class EditActivity extends AppCompatActivity implements FitnessClient.Cal
             binding.weightEditText.requestFocus();
             InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             manager.showSoftInput(binding.weightEditText, InputMethodManager.SHOW_IMPLICIT);
+            binding.dateEditText.setOnClickListener(this);
+            binding.timeEditText.setOnClickListener(this);
         }
     }
 
@@ -178,6 +222,7 @@ public class EditActivity extends AppCompatActivity implements FitnessClient.Cal
     private void save() {
         // TODO: validate weight value
         float weight = Float.valueOf(binding.weightEditText.getText().toString());
+        long timestamp = LocalDateTimeUtil.toEpochMilli(localDateTime);
 
         Completable completable = dataPoint == null
                 ? client.insert(weight, timestamp)
@@ -195,6 +240,7 @@ public class EditActivity extends AppCompatActivity implements FitnessClient.Cal
     }
 
     private void delete() {
+        long timestamp = LocalDateTimeUtil.toEpochMilli(localDateTime);
         Completable completable = client.delete(timestamp);
 
         Disposable disposable = completable
