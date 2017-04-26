@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 import static java.text.DateFormat.getDateInstance;
 
-public class FitnessWeightAdapter extends RecyclerView.Adapter<FitnessWeightAdapter.ViewHolder> {
+public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public interface Callback {
         void onClickDataPoint(DataPoint dataPoint);
@@ -36,27 +36,53 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<FitnessWeightAdap
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(inflater.inflate(R.layout.view_fitness_weight, parent, false));
+    public int getItemViewType(int position) {
+        switch (position) {
+            case 0:
+                return 0;
+            default:
+                return 1;
+        }
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        DataPoint dataPoint = dataPoints.get(position);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        switch (viewType) {
+            case 0:
+                return new SpinnerViewHolder(inflater.inflate(R.layout.view_spinner, parent, false));
+            default:
+                return new DataViewHolder(inflater.inflate(R.layout.view_fitness_weight, parent, false));
+        }
+    }
 
-        if (dataPoint.getDataType().getFields().size() == 1) {
-            // DataType com.google.weight の標準単位は kg
-            // https://developers.google.com/fit/android/data-types#public_data_types
-            Field field = dataPoint.getDataType().getFields().get(0);
-            holder.weightTextView.setText(dataPoint.getValue(field).toString() + context.getString(R.string.unit_kg));
-            holder.dateTextView.setText(dateFormat.format(dataPoint.getTimestamp(TimeUnit.MILLISECONDS)));
-            holder.itemView.setOnClickListener(v -> callback.onClickDataPoint(dataPoint));
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        int viewType = getItemViewType(position);
+
+        switch (viewType) {
+            case 0: {
+                break;
+            }
+            default: {
+                DataPoint dataPoint = dataPoints.get(position - 1);
+                DataViewHolder holder1 = (DataViewHolder) holder;
+
+                if (dataPoint.getDataType().getFields().size() == 1) {
+                    // DataType com.google.weight の標準単位は kg
+                    // https://developers.google.com/fit/android/data-types#public_data_types
+                    Field field = dataPoint.getDataType().getFields().get(0);
+                    holder1.weightTextView.setText(dataPoint.getValue(field).toString() + context.getString(R.string.unit_kg));
+                    holder1.dateTextView.setText(dateFormat.format(dataPoint.getTimestamp(TimeUnit.MILLISECONDS)));
+                    holder1.itemView.setOnClickListener(v -> callback.onClickDataPoint(dataPoint));
+                }
+                break;
+            }
         }
     }
 
     @Override
     public int getItemCount() {
-        return dataPoints.size();
+        return dataPoints.isEmpty() ? 0 : dataPoints.size() + 1;
     }
 
     public void setDataPoints(List<DataPoint> dataPoints) {
@@ -69,12 +95,19 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<FitnessWeightAdap
         notifyDataSetChanged();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class SpinnerViewHolder extends RecyclerView.ViewHolder {
+
+        public SpinnerViewHolder(View itemView) {
+            super(itemView);
+        }
+    }
+
+    class DataViewHolder extends RecyclerView.ViewHolder {
 
         TextView weightTextView;
         TextView dateTextView;
 
-        public ViewHolder(View itemView) {
+        public DataViewHolder(View itemView) {
             super(itemView);
             weightTextView = (TextView) itemView.findViewById(R.id.weight_text_view);
             dateTextView = (TextView) itemView.findViewById(R.id.date_text_view);
