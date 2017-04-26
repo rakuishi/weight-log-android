@@ -81,6 +81,10 @@ public class FitnessClient implements GoogleApiClient.ConnectionCallbacks,
         }
     }
 
+    public void clearDefaultAccountAndReconnect() {
+        client.clearDefaultAccountAndReconnect();
+    }
+
     public boolean isConnected() {
         return client.isConnected();
     }
