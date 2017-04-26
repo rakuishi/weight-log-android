@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.rakuishi.weight.databinding.ActivityMainBinding;
 
@@ -17,7 +18,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements
         FitnessClient.Callback, View.OnClickListener, FitnessWeightAdapter.Callback {
@@ -40,6 +40,8 @@ public class MainActivity extends AppCompatActivity implements
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerView.addItemDecoration(new DividerItemDecoration(getResources()));
         binding.recyclerView.setAdapter(adapter);
+        binding.signInButton.setSize(SignInButton.SIZE_WIDE);
+        binding.signInButton.setOnClickListener(this);
         binding.fab.setOnClickListener(this);
 
         compositeDisposable = new CompositeDisposable();
@@ -54,7 +56,9 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_main, menu);
+        if (client.isConnected()) {
+            getMenuInflater().inflate(R.menu.activity_main, menu);
+        }
         return true;
     }
 
@@ -74,11 +78,14 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onConnectionSuccess() {
         loadFitnessWeight();
+        invalidateOptionsMenu();
+        binding.fab.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onConnectionFail(Exception e) {
-        SignInHelper.onConnectionFail(this);
+        binding.progressBar.setVisibility(View.GONE);
+        binding.signInButton.setVisibility(View.VISIBLE);
     }
 
     // endregion
@@ -87,8 +94,14 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.fab) {
-            startActivity(EditActivity.create(this));
+        switch (v.getId()) {
+            case R.id.sign_in_button:
+                startActivity(MainActivity.create(this));
+                finish();
+                break;
+            case R.id.fab:
+                startActivity(EditActivity.create(this));
+                break;
         }
     }
 

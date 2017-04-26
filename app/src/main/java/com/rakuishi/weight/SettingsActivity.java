@@ -57,7 +57,7 @@ public class SettingsActivity extends AppCompatActivity implements FitnessClient
 
     @Override
     public void onConnectionFail(Exception e) {
-        SignInHelper.onConnectionFail(this);
+        SignInHelper.fail(this);
     }
 
     // endregion

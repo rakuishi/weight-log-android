@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -23,8 +24,10 @@
             android:layout_margin="@dimen/dp_16"
             android:clickable="true"
             android:src="@drawable/ic_add_white_24dp"
+            android:visibility="gone"
             app:borderWidth="@dimen/dp_0"
-            app:elevation="@dimen/dp_4" />
+            app:elevation="@dimen/dp_4"
+            tools:visibility="visible" />
 
         <ProgressBar
             android:id="@+id/progress_bar"
@@ -33,6 +36,14 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/horizontal_progressbar_negative_padding"
             android:indeterminate="true" />
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/sign_in_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
     </RelativeLayout>
 

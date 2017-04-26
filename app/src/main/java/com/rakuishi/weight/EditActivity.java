@@ -136,7 +136,7 @@ public class EditActivity extends AppCompatActivity implements FitnessClient.Cal
 
     @Override
     public void onConnectionFail(Exception e) {
-        SignInHelper.onConnectionFail(this);
+        SignInHelper.fail(this);
     }
 
     // endregion
