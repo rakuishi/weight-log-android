@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -52,7 +53,7 @@ public class SettingsActivity extends AppCompatActivity implements FitnessClient
 
     @Override
     public void onConnectionFail(Exception e) {
-
+        SignInHelper.onConnectionFail(this);
     }
 
     // endregion

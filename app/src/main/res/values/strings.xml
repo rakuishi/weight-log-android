@@ -10,5 +10,6 @@
     <string name="date">Date</string>
     <string name="time">Time</string>
     <string name="settings">Settings</string>
+    <string name="failed_to_connect">Google Play services connection failed.</string>
     <string name="note_update_or_delete_data">This data is inserted by other apps. 3rd party apps, which use Google Fit API, cannot update / delete data inserted by other apps.</string>
 </resources>

@@ -31,7 +31,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import timber.log.Timber;
 
 public class EditActivity extends AppCompatActivity implements FitnessClient.Callback,
         View.OnClickListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
@@ -137,7 +136,7 @@ public class EditActivity extends AppCompatActivity implements FitnessClient.Cal
 
     @Override
     public void onConnectionFail(Exception e) {
-        Timber.d("onConnectionFail: " + e.getMessage());
+        SignInHelper.onConnectionFail(this);
     }
 
     // endregion

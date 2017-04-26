@@ -1,5 +1,7 @@
 package com.rakuishi.weight;
 
+import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +26,10 @@ public class MainActivity extends AppCompatActivity implements
     private CompositeDisposable compositeDisposable;
     private ActivityMainBinding binding;
     private FitnessWeightAdapter adapter;
+
+    public static Intent create(Context context) {
+        return new Intent(context, MainActivity.class);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onConnectionFail(Exception e) {
-        Timber.d("onConnectionFail: " + e.getMessage());
+        SignInHelper.onConnectionFail(this);
     }
 
     // endregion
