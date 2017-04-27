@@ -11,6 +11,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -169,15 +170,29 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
             super(itemView);
             chart = (LineChart) itemView.findViewById(R.id.chart);
             chart.getDescription().setEnabled(false);
+            chart.setDrawGridBackground(false);
+            chart.getAxisRight().setEnabled(false);
+            chart.getLegend().setEnabled(false);
+
             chart.setPinchZoom(false);
             chart.setTouchEnabled(false);
-            chart.setDrawGridBackground(false);
-            chart.getLegend().setEnabled(false);
-            chart.getAxisRight().setEnabled(false);
-            chart.getAxisLeft().setDrawGridLines(false);
+
+            chart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+            chart.getXAxis().setAxisLineWidth(1f);
+            chart.getXAxis().setAxisLineColor(context.getResources().getColor(R.color.divider));
+            chart.getXAxis().setLabelCount(4);
+            chart.getXAxis().setTextSize(12f);
+            chart.getXAxis().setTextColor(context.getResources().getColor(R.color.secondary_text));
             chart.getXAxis().setDrawGridLines(false);
-            chart.getXAxis().setDrawAxisLine(false);
-            chart.getXAxis().setDrawLabels(false);
+
+            chart.getAxisLeft().setAxisLineWidth(1f);
+            chart.getAxisLeft().setAxisLineColor(context.getResources().getColor(R.color.divider));
+            chart.getAxisLeft().setGridLineWidth(0.5f);
+            chart.getAxisLeft().setGridColor(context.getResources().getColor(R.color.divider));
+            chart.getAxisLeft().setTextSize(12f);
+            chart.getAxisLeft().setTextColor(context.getResources().getColor(R.color.secondary_text));
+            chart.getAxisLeft().setGranularity(0.25f);
+            chart.getAxisLeft().setLabelCount(4);
         }
 
         public void render(List<DataPoint> points) {
@@ -206,14 +221,11 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
             lineDataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
             lineDataSet.setColor(context.getResources().getColor(R.color.colorPrimary));
             lineDataSet.setFillColor(context.getResources().getColor(R.color.colorPrimary));
-            lineDataSet.setFillAlpha(100);
             lineDataSet.setCubicIntensity(0.2f);
-            lineDataSet.setDrawCircles(true);
-            lineDataSet.setCircleColor(context.getResources().getColor(R.color.colorPrimary));
-            lineDataSet.setCircleRadius(6f);
-            lineDataSet.setLineWidth(3f);
-            lineDataSet.setDrawFilled(true);
+            lineDataSet.setLineWidth(2f);
+            lineDataSet.setDrawCircles(false);
             lineDataSet.setDrawValues(false);
+            lineDataSet.setDrawFilled(true);
             return lineDataSet;
         }
     }
