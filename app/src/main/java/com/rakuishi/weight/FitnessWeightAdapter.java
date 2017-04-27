@@ -10,6 +10,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.Field;
 
@@ -48,8 +53,10 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
         switch (position) {
             case 0:
                 return 0;
-            default:
+            case 1:
                 return 1;
+            default:
+                return 2;
         }
     }
 
@@ -58,6 +65,8 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
         switch (viewType) {
             case 0:
                 return new SpinnerViewHolder(inflater.inflate(R.layout.view_spinner, parent, false));
+            case 1:
+                return new ChartViewHolder(inflater.inflate(R.layout.view_chart, parent, false));
             default:
                 return new DataViewHolder(inflater.inflate(R.layout.view_fitness_weight, parent, false));
         }
@@ -72,8 +81,12 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
                 ((SpinnerViewHolder) holder).render();
                 break;
             }
+            case 1: {
+                ((ChartViewHolder) holder).render(dataPoints);
+                break;
+            }
             default: {
-                ((DataViewHolder) holder).render(dataPoints.get(position - 1));
+                ((DataViewHolder) holder).render(dataPoints.get(position - 2));
                 break;
             }
         }
@@ -81,7 +94,7 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public int getItemCount() {
-        return dataPoints.isEmpty() ? 0 : dataPoints.size() + 1;
+        return dataPoints.isEmpty() ? 0 : dataPoints.size() + 2;
     }
 
     public void setDataPoints(List<DataPoint> dataPoints) {
@@ -145,6 +158,63 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
 
                 }
             });
+        }
+    }
+
+    class ChartViewHolder extends RecyclerView.ViewHolder {
+
+        LineChart chart;
+
+        public ChartViewHolder(View itemView) {
+            super(itemView);
+            chart = (LineChart) itemView.findViewById(R.id.chart);
+            chart.getDescription().setEnabled(false);
+            chart.setPinchZoom(false);
+            chart.setTouchEnabled(false);
+            chart.setDrawGridBackground(false);
+            chart.getLegend().setEnabled(false);
+            chart.getAxisRight().setEnabled(false);
+            chart.getAxisLeft().setDrawGridLines(false);
+            chart.getXAxis().setDrawGridLines(false);
+            chart.getXAxis().setDrawAxisLine(false);
+            chart.getXAxis().setDrawLabels(false);
+        }
+
+        public void render(List<DataPoint> points) {
+            ArrayList<Entry> values = new ArrayList<>();
+
+            int i = 0;
+            for (DataPoint point : points) {
+                if (point.getDataType().getFields().size() != 1) {
+                    continue;
+                }
+
+                Field field = point.getDataType().getFields().get(0);
+                values.add(new Entry(i, Float.valueOf(point.getValue(field).toString())));
+                i++;
+            }
+
+            ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+            dataSets.add(getLineDataSet(values));
+            LineData lineData = new LineData(dataSets);
+            chart.setData(lineData);
+            chart.invalidate();
+        }
+
+        public LineDataSet getLineDataSet(List<Entry> entries) {
+            LineDataSet lineDataSet = new LineDataSet(entries, "");
+            lineDataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+            lineDataSet.setColor(context.getResources().getColor(R.color.colorPrimary));
+            lineDataSet.setFillColor(context.getResources().getColor(R.color.colorPrimary));
+            lineDataSet.setFillAlpha(100);
+            lineDataSet.setCubicIntensity(0.2f);
+            lineDataSet.setDrawCircles(true);
+            lineDataSet.setCircleColor(context.getResources().getColor(R.color.colorPrimary));
+            lineDataSet.setCircleRadius(6f);
+            lineDataSet.setLineWidth(3f);
+            lineDataSet.setDrawFilled(true);
+            lineDataSet.setDrawValues(false);
+            return lineDataSet;
         }
     }
 
