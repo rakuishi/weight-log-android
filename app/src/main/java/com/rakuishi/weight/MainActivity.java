@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onConnectionSuccess() {
-        loadFitnessWeight();
+        loadFitnessWeight(1);
         invalidateOptionsMenu();
         binding.fab.setVisibility(View.VISIBLE);
     }
@@ -110,14 +110,20 @@ public class MainActivity extends AppCompatActivity implements
     // region FitnessWeightAdapter.Callback
 
     @Override
-    public void onClickDataPoint(DataPoint dataPoint) {
+    public void onDataPointClicked(DataPoint dataPoint) {
         startActivity(EditActivity.create(this, dataPoint));
+    }
+
+    @Override
+    public void onSpinnerItemSelected(int amount) {
+        binding.progressBar.setVisibility(View.VISIBLE);
+        loadFitnessWeight(amount);
     }
 
     // endregion
 
-    private void loadFitnessWeight() {
-        Disposable disposable = client.find(3)
+    private void loadFitnessWeight(int amount) {
+        Disposable disposable = client.find(amount)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.newThread())
                 .subscribe(dataPoints -> {
