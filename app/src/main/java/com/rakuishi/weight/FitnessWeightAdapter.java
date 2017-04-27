@@ -5,10 +5,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.Field;
+
+import org.threeten.bp.LocalDateTime;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -61,6 +65,8 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         switch (viewType) {
             case 0: {
+                SpinnerViewHolder holder2 = (SpinnerViewHolder) holder;
+                holder2.spinner.setAdapter(getSpinnerArrayAdapter());
                 break;
             }
             default: {
@@ -90,15 +96,27 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
         notifyDataSetChanged();
     }
 
-    public void clear() {
-        dataPoints.clear();
-        notifyDataSetChanged();
+    private ArrayAdapter<String> getSpinnerArrayAdapter() {
+        String items[] = {getDateRange(1), getDateRange(2), getDateRange(3), getDateRange(6)};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, items);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        return adapter;
+    }
+
+    private String getDateRange(int amount) {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        String start = LocalDateTimeUtil.formatLocalizedDate(localDateTime);
+        String end = LocalDateTimeUtil.formatLocalizedDate(localDateTime.minusMonths(amount));
+        return String.format(context.getString(R.string.date_range_format), 30 * amount, start, end);
     }
 
     class SpinnerViewHolder extends RecyclerView.ViewHolder {
 
+        Spinner spinner;
+
         public SpinnerViewHolder(View itemView) {
             super(itemView);
+            spinner = (Spinner) itemView.findViewById(R.id.spinner);
         }
     }
 
