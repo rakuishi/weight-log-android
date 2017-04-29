@@ -23,4 +23,8 @@ public class LocalDateTimeUtil {
     public static String formatLocalizedTime(LocalDateTime localDateTime) {
         return localDateTime.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT));
     }
+
+    public static String formatISOLocalDate(LocalDateTime localDateTime) {
+        return localDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE);
+    }
 }

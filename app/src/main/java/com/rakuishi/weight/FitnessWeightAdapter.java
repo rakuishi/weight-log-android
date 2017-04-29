@@ -11,10 +11,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.Field;
@@ -23,6 +25,7 @@ import org.threeten.bp.LocalDateTime;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -165,6 +168,7 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
     class ChartViewHolder extends RecyclerView.ViewHolder {
 
         LineChart chart;
+        HashMap<Integer, String> xAxisHashMap = new HashMap<>();
 
         public ChartViewHolder(View itemView) {
             super(itemView);
@@ -184,6 +188,7 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
             chart.getXAxis().setTextSize(12f);
             chart.getXAxis().setTextColor(context.getResources().getColor(R.color.secondary_text));
             chart.getXAxis().setDrawGridLines(false);
+            chart.getXAxis().setValueFormatter(new AxisValueFormatter());
 
             chart.getAxisLeft().setAxisLineWidth(1f);
             chart.getAxisLeft().setAxisLineColor(context.getResources().getColor(R.color.divider));
@@ -205,7 +210,10 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
                 }
 
                 Field field = point.getDataType().getFields().get(0);
+                LocalDateTime localDateTime = LocalDateTimeUtil.from(point.getTimestamp(TimeUnit.MILLISECONDS));
+                String date = LocalDateTimeUtil.formatISOLocalDate(localDateTime);
                 values.add(new Entry(i, Float.valueOf(point.getValue(field).toString())));
+                xAxisHashMap.put(i, date);
                 i++;
             }
 
@@ -227,6 +235,14 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
             lineDataSet.setDrawValues(false);
             lineDataSet.setDrawFilled(true);
             return lineDataSet;
+        }
+
+        public class AxisValueFormatter implements IAxisValueFormatter {
+
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                return xAxisHashMap.get((int) value);
+            }
         }
     }
 
