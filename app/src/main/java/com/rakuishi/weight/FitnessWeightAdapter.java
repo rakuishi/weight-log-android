@@ -168,15 +168,22 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
     class ChartViewHolder extends RecyclerView.ViewHolder {
 
         LineChart chart;
-        HashMap<Integer, String> xAxisHashMap = new HashMap<>();
+        ArrayList<Entry> entries;
+        float max;
+        float min;
 
         public ChartViewHolder(View itemView) {
             super(itemView);
+            entries = new ArrayList<>();
+            max = 0f;
+            min = 0f;
+
             chart = (LineChart) itemView.findViewById(R.id.chart);
             chart.getDescription().setEnabled(false);
             chart.setDrawGridBackground(false);
             chart.getAxisRight().setEnabled(false);
             chart.getLegend().setEnabled(false);
+            chart.setExtraLeftOffset(4f);
 
             chart.setPinchZoom(false);
             chart.setTouchEnabled(false);
@@ -184,7 +191,7 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
             chart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
             chart.getXAxis().setAxisLineWidth(1f);
             chart.getXAxis().setAxisLineColor(context.getResources().getColor(R.color.divider));
-            chart.getXAxis().setLabelCount(4);
+            chart.getXAxis().setLabelCount(5, true);
             chart.getXAxis().setTextSize(12f);
             chart.getXAxis().setTextColor(context.getResources().getColor(R.color.secondary_text));
             chart.getXAxis().setDrawGridLines(false);
@@ -196,40 +203,83 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
             chart.getAxisLeft().setGridColor(context.getResources().getColor(R.color.divider));
             chart.getAxisLeft().setTextSize(12f);
             chart.getAxisLeft().setTextColor(context.getResources().getColor(R.color.secondary_text));
-            chart.getAxisLeft().setGranularity(0.25f);
-            chart.getAxisLeft().setLabelCount(4);
+            chart.getAxisLeft().setGranularity(0.5f);
+            chart.getAxisLeft().setLabelCount(5, true);
         }
 
         public void render(List<DataPoint> points) {
-            ArrayList<Entry> values = new ArrayList<>();
+            if (points == null || points.isEmpty()) {
+                return;
+            }
 
-            int i = 0;
-            for (DataPoint point : points) {
+            entries = new ArrayList<>();
+            max = 0f;
+            min = 0f;
+
+            // 基準日
+            HashMap<String, Entry> entryHashMap = new HashMap<>();
+
+            for (int i = points.size() - 1; i >= 0; i--) {
+                DataPoint point = dataPoints.get(i);
                 if (point.getDataType().getFields().size() != 1) {
                     continue;
                 }
 
-                Field field = point.getDataType().getFields().get(0);
                 LocalDateTime localDateTime = LocalDateTimeUtil.from(point.getTimestamp(TimeUnit.MILLISECONDS));
-                String date = LocalDateTimeUtil.formatISOLocalDate(localDateTime);
-                values.add(new Entry(i, Float.valueOf(point.getValue(field).toString())));
-                xAxisHashMap.put(i, date);
-                i++;
+                String date = LocalDateTimeUtil.formatSimpleLocalDate(localDateTime);
+                if (!entryHashMap.containsKey(date)) {
+                    Field field = point.getDataType().getFields().get(0);
+                    Entry entry = new Entry(i, Float.valueOf(point.getValue(field).toString()), date);
+                    entryHashMap.put(date, entry);
+                }
+            }
+
+            LocalDateTime basisLocalDateTime = LocalDateTime.now().minusMonths(getAmount(spinnerSelectedPosition));
+
+            for (int i = 0; i <= 30 * getAmount(spinnerSelectedPosition); i++) {
+                LocalDateTime localDateTime = basisLocalDateTime.plusDays(i);
+                String date = LocalDateTimeUtil.formatSimpleLocalDate(localDateTime);
+
+                if (entryHashMap.containsKey(date)) {
+                    Entry entry = entryHashMap.get(date);
+                    entry.setX(entries.size());
+                    entry.setData(date);
+                    entries.add(entry);
+
+                    max = (max == 0.f) ? entry.getY() : Math.max(max, entry.getY());
+                    min = (min == 0.f) ? entry.getY() : Math.min(min, entry.getY());
+
+                } else if (!entries.isEmpty()) {
+                    // HashMap にない場合は直前のデータを再利用し、数字は上書きする
+                    Entry entry = entries.get(entries.size() - 1);
+                    entry.setX(entries.size());
+                    entry.setData(date);
+                    entries.add(entry);
+
+                    max = Math.max(max, entry.getY());
+                    min = Math.min(min, entry.getY());
+                }
+            }
+
+            if (entries.isEmpty()) {
+                return;
             }
 
             ArrayList<ILineDataSet> dataSets = new ArrayList<>();
-            dataSets.add(getLineDataSet(values));
+            dataSets.add(getLineDataSet(entries));
             LineData lineData = new LineData(dataSets);
+
             chart.setData(lineData);
+            chart.getAxisLeft().setAxisMaximum((float) Math.ceil(max) + 1f);
+            chart.getAxisLeft().setAxisMinimum((float) Math.floor(min) - 1f);
             chart.invalidate();
         }
 
         public LineDataSet getLineDataSet(List<Entry> entries) {
             LineDataSet lineDataSet = new LineDataSet(entries, "");
-            lineDataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+            lineDataSet.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
             lineDataSet.setColor(context.getResources().getColor(R.color.colorPrimary));
             lineDataSet.setFillColor(context.getResources().getColor(R.color.colorPrimary));
-            lineDataSet.setCubicIntensity(0.2f);
             lineDataSet.setLineWidth(2f);
             lineDataSet.setDrawCircles(false);
             lineDataSet.setDrawValues(false);
@@ -241,7 +291,10 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
 
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
-                return xAxisHashMap.get((int) value);
+                int position = (int) value;
+                return (entries == null || position >= entries.size())
+                        ? ""
+                        : (String) entries.get(position).getData();
             }
         }
     }

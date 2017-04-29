@@ -24,7 +24,7 @@ public class LocalDateTimeUtil {
         return localDateTime.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT));
     }
 
-    public static String formatISOLocalDate(LocalDateTime localDateTime) {
-        return localDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE);
+    public static String formatSimpleLocalDate(LocalDateTime localDateTime) {
+        return localDateTime.format(DateTimeFormatter.ofPattern("MM-dd"));
     }
 }
