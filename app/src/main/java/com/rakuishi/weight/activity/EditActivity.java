@@ -18,12 +18,12 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.gms.fitness.data.DataPoint;
-import com.google.android.gms.fitness.data.Field;
 import com.rakuishi.weight.R;
 import com.rakuishi.weight.databinding.ActivityEditBinding;
 import com.rakuishi.weight.fragment.DatePickerDialogFragment;
 import com.rakuishi.weight.fragment.TimePickerDialogFragment;
 import com.rakuishi.weight.repo.FitnessClient;
+import com.rakuishi.weight.util.DataPointUtil;
 import com.rakuishi.weight.util.LocalDateTimeUtil;
 import com.rakuishi.weight.util.SignInHelper;
 
@@ -188,8 +188,7 @@ public class EditActivity extends AppCompatActivity implements FitnessClient.Cal
     private void updateViewComponents() {
         String value = binding.weightEditText.getText().toString();
         if (TextUtils.isEmpty(value) && dataPoint != null) {
-            Field field = dataPoint.getDataType().getFields().get(0);
-            value = dataPoint.getValue(field).toString();
+            value = String.valueOf(DataPointUtil.getValue(dataPoint));
         }
 
         binding.weightEditText.setText(value);

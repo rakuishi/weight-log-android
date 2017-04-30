@@ -301,6 +301,7 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
 
         void renderTextView(List<DataPoint> points) {
+            // データは降順に格納されている
             DataPoint firstDataPoint = points.get(points.size() - 1);
             DataPoint lastDataPoint = points.get(0);
 
@@ -333,15 +334,14 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
 
             for (int i = points.size() - 1; i >= 0; i--) {
                 DataPoint point = points.get(i);
-                if (point.getDataType().getFields().size() != 1) {
+                if (!DataPointUtil.hasValue(point)) {
                     continue;
                 }
 
                 LocalDateTime localDateTime = LocalDateTimeUtil.from(point.getTimestamp(TimeUnit.MILLISECONDS));
                 String date = LocalDateTimeUtil.formatSimpleLocalDate(localDateTime);
                 if (!entryHashMap.containsKey(date)) {
-                    Field field = point.getDataType().getFields().get(0);
-                    Entry entry = new Entry(i, Float.valueOf(point.getValue(field).toString()), date);
+                    Entry entry = new Entry(i, DataPointUtil.getValue(point), date);
                     entryHashMap.put(date, entry);
                 }
             }
@@ -425,11 +425,10 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
 
         void render(DataPoint dataPoint, boolean isFirst) {
-            if (dataPoint.getDataType().getFields().size() == 1) {
+            if (DataPointUtil.hasValue(dataPoint)) {
                 // DataType com.google.weight の標準単位は kg
                 // https://developers.google.com/fit/android/data-types#public_data_types
-                Field field = dataPoint.getDataType().getFields().get(0);
-                float value = Float.valueOf(dataPoint.getValue(field).toString());
+                float value = DataPointUtil.getValue(dataPoint);
                 String text = String.format(context.getString(R.string.unit_kg_format), value);
                 weightTextView.setText(text);
                 dateTextView.setText(dateFormat.format(dataPoint.getTimestamp(TimeUnit.MILLISECONDS)));
