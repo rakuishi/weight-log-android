@@ -25,6 +25,7 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.Field;
 import com.rakuishi.weight.R;
+import com.rakuishi.weight.util.DataPointUtil;
 import com.rakuishi.weight.util.DensityUtil;
 import com.rakuishi.weight.util.LocalDateTimeUtil;
 
@@ -119,6 +120,7 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public void setDataPoints(List<DataPoint> dataPoints) {
+        // TODO: データが空の時のレイアウトを作成する
         this.dataPoints = dataPoints;
         notifyDataSetChanged();
     }
@@ -240,6 +242,11 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     private class ChartViewHolder extends RecyclerView.ViewHolder {
 
+        TextView weightTextView;
+        TextView dateTextView;
+        TextView vsPercentTextView;
+        TextView vsDateTextView;
+
         LineChart chart;
         ArrayList<Entry> entries;
         float max;
@@ -250,6 +257,11 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
             entries = new ArrayList<>();
             max = 0f;
             min = 0f;
+
+            weightTextView = (TextView) itemView.findViewById(R.id.last_weight_text_view);
+            dateTextView = (TextView) itemView.findViewById(R.id.last_date_text_view);
+            vsPercentTextView = (TextView) itemView.findViewById(R.id.vs_percent_text_view);
+            vsDateTextView = (TextView) itemView.findViewById(R.id.vs_date_text_view);
 
             chart = (LineChart) itemView.findViewById(R.id.chart);
             chart.getDescription().setEnabled(false);
@@ -284,6 +296,34 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
                 return;
             }
 
+            renderTextView(points);
+            renderChart(points);
+        }
+
+        void renderTextView(List<DataPoint> points) {
+            DataPoint firstDataPoint = points.get(points.size() - 1);
+            DataPoint lastDataPoint = points.get(0);
+
+            if (!DataPointUtil.hasValue(firstDataPoint) || !DataPointUtil.hasValue(lastDataPoint)) {
+                return;
+            }
+
+            float firstValue = DataPointUtil.getValue(firstDataPoint);
+            float lastValue = DataPointUtil.getValue(lastDataPoint);
+
+            if (firstValue == 0f) {
+                return;
+            }
+
+            float percent = (lastValue / firstValue - 1) * 100;
+
+            weightTextView.setText(String.format(context.getString(R.string.unit_kg_format), lastValue));
+            dateTextView.setText(dateFormat.format(lastDataPoint.getTimestamp(TimeUnit.MILLISECONDS)));
+            vsPercentTextView.setText(String.format(context.getString(R.string.vs_percent_format), percent));
+            vsDateTextView.setText(String.format(context.getString(R.string.vs_date_format), dateFormat.format(firstDataPoint.getTimestamp(TimeUnit.MILLISECONDS))));
+        }
+
+        void renderChart(List<DataPoint> points) {
             entries = new ArrayList<>();
             max = 0f;
             min = 0f;
@@ -292,7 +332,7 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
             HashMap<String, Entry> entryHashMap = new HashMap<>();
 
             for (int i = points.size() - 1; i >= 0; i--) {
-                DataPoint point = dataPoints.get(i);
+                DataPoint point = points.get(i);
                 if (point.getDataType().getFields().size() != 1) {
                     continue;
                 }

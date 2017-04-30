@@ -16,4 +16,6 @@
     <string name="note_update_or_delete_data">This data is inserted by other apps. 3rd party apps, which use Google Fit API, cannot update / delete data inserted by other apps.</string>
     <string name="last_days_format">Last %1$d days</string>
     <string name="date_range_format">%1$s ~ %2$s</string>
+    <string name="vs_percent_format">%1$.1f %%</string>
+    <string name="vs_date_format">vs %1$s</string>
 </resources>

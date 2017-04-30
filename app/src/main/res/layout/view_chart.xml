@@ -1,11 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
     android:orientation="vertical">
 
     <include layout="@layout/view_divider" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dp_16"
+        android:layout_marginRight="@dimen/dp_16"
+        android:layout_marginTop="@dimen/dp_16">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/last_weight_text_view"
+                style="@style/PrimaryTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/sp_20"
+                tools:text="58.0 kg" />
+
+            <TextView
+                android:id="@+id/last_date_text_view"
+                style="@style/SecondaryTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/sp_12"
+                tools:text="Apr 24, 2017" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:gravity="right"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/vs_percent_text_view"
+                style="@style/PrimaryTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/secondary_text"
+                android:textSize="@dimen/sp_20"
+                tools:text="-10%" />
+
+            <TextView
+                android:id="@+id/vs_date_text_view"
+                style="@style/SecondaryTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/sp_12"
+                tools:text="vs Apr 24, 2017" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/chart"
