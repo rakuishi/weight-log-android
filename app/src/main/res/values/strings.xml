@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Weight</string>
     <string name="unit_kg">kg</string>
-    <string name="unit_kg_format">%1$s kg</string>
+    <string name="unit_kg_format">%1$.1f kg</string>
     <string name="save">Save</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>

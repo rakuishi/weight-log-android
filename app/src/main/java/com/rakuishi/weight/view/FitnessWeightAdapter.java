@@ -389,7 +389,8 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
                 // DataType com.google.weight の標準単位は kg
                 // https://developers.google.com/fit/android/data-types#public_data_types
                 Field field = dataPoint.getDataType().getFields().get(0);
-                String text = String.format(context.getString(R.string.unit_kg_format), dataPoint.getValue(field).toString());
+                float value = Float.valueOf(dataPoint.getValue(field).toString());
+                String text = String.format(context.getString(R.string.unit_kg_format), value);
                 weightTextView.setText(text);
                 dateTextView.setText(dateFormat.format(dataPoint.getTimestamp(TimeUnit.MILLISECONDS)));
                 itemView.setOnClickListener(v -> callback.onDataPointClicked(dataPoint));
