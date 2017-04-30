@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#4569AF</color>
-    <color name="colorPrimaryDark">#293F69</color>
-    <color name="colorAccent">#D04037</color>
+    <!-- http://www.color-hex.com/color/00b8d3 -->
+    <color name="colorPrimary">#00B8D3</color>
+    <color name="colorPrimaryDark">#00a5bd</color>
+    <color name="colorAccent">#FC5185</color>
     <color name="primary_text">#212121</color>
     <color name="secondary_text">#757575</color>
     <color name="divider">#E0E0E0</color>
