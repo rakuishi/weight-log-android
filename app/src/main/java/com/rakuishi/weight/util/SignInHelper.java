@@ -1,8 +1,11 @@
-package com.rakuishi.weight;
+package com.rakuishi.weight.util;
 
 import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
+
+import com.rakuishi.weight.R;
+import com.rakuishi.weight.activity.MainActivity;
 
 public class SignInHelper {
 

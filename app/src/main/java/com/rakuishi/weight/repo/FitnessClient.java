@@ -1,4 +1,4 @@
-package com.rakuishi.weight;
+package com.rakuishi.weight.repo;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;

@@ -1,4 +1,4 @@
-package com.rakuishi.weight;
+package com.rakuishi.weight.view;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +20,8 @@ import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.Field;
+import com.rakuishi.weight.R;
+import com.rakuishi.weight.util.LocalDateTimeUtil;
 
 import org.threeten.bp.LocalDateTime;
 

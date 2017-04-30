@@ -1,4 +1,4 @@
-package com.rakuishi.weight;
+package com.rakuishi.weight.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +12,11 @@ import android.view.View;
 
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.fitness.data.DataPoint;
+import com.rakuishi.weight.R;
 import com.rakuishi.weight.databinding.ActivityMainBinding;
+import com.rakuishi.weight.repo.FitnessClient;
+import com.rakuishi.weight.view.DividerItemDecoration;
+import com.rakuishi.weight.view.FitnessWeightAdapter;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;

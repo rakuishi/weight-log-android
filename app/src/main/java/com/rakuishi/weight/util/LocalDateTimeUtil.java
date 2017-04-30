@@ -1,4 +1,4 @@
-package com.rakuishi.weight;
+package com.rakuishi.weight.util;
 
 import org.threeten.bp.Instant;
 import org.threeten.bp.LocalDateTime;

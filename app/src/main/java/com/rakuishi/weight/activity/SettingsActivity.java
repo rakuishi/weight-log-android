@@ -1,4 +1,4 @@
-package com.rakuishi.weight;
+package com.rakuishi.weight.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +9,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.rakuishi.weight.R;
+import com.rakuishi.weight.util.SignInHelper;
 import com.rakuishi.weight.databinding.ActivitySettingsBinding;
+import com.rakuishi.weight.repo.FitnessClient;
 
 public class SettingsActivity extends AppCompatActivity implements FitnessClient.Callback {
 

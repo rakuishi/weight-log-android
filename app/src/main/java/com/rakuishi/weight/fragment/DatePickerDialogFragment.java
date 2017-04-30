@@ -1,4 +1,4 @@
-package com.rakuishi.weight;
+package com.rakuishi.weight.fragment;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
