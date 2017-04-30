@@ -25,6 +25,6 @@ public class LocalDateTimeUtil {
     }
 
     public static String formatSimpleLocalDate(LocalDateTime localDateTime) {
-        return localDateTime.format(DateTimeFormatter.ofPattern("MM-dd"));
+        return localDateTime.format(DateTimeFormatter.ofPattern("M/d"));
     }
 }
