@@ -1,6 +1,7 @@
 package com.rakuishi.weight.view;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -135,18 +136,18 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
         return String.format(context.getString(R.string.date_range_format), 30 * amount, start, end);
     }
 
-    class SpinnerViewHolder extends RecyclerView.ViewHolder {
+    private class SpinnerViewHolder extends RecyclerView.ViewHolder {
 
         // スピナーの初期設定時に `onItemSelected()` が発火するのを防ぐ
         private int spinnerSelectedCount;
         Spinner spinner;
 
-        public SpinnerViewHolder(View itemView) {
+        SpinnerViewHolder(View itemView) {
             super(itemView);
             spinner = (Spinner) itemView.findViewById(R.id.spinner);
         }
 
-        public void render() {
+        void render() {
             spinnerSelectedCount = 0;
             spinner.setAdapter(getSpinnerArrayAdapter());
             spinner.setSelection(spinnerSelectedPosition);
@@ -167,14 +168,14 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    class ChartViewHolder extends RecyclerView.ViewHolder {
+    private class ChartViewHolder extends RecyclerView.ViewHolder {
 
         LineChart chart;
         ArrayList<Entry> entries;
         float max;
         float min;
 
-        public ChartViewHolder(View itemView) {
+        ChartViewHolder(View itemView) {
             super(itemView);
             entries = new ArrayList<>();
             max = 0f;
@@ -192,24 +193,24 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
 
             chart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
             chart.getXAxis().setAxisLineWidth(1f);
-            chart.getXAxis().setAxisLineColor(context.getResources().getColor(R.color.divider));
+            chart.getXAxis().setAxisLineColor(ContextCompat.getColor(context, R.color.divider));
             chart.getXAxis().setLabelCount(5, true);
             chart.getXAxis().setTextSize(12f);
-            chart.getXAxis().setTextColor(context.getResources().getColor(R.color.secondary_text));
+            chart.getXAxis().setTextColor(ContextCompat.getColor(context, R.color.secondary_text));
             chart.getXAxis().setDrawGridLines(false);
             chart.getXAxis().setValueFormatter(new AxisValueFormatter());
 
             chart.getAxisLeft().setAxisLineWidth(1f);
-            chart.getAxisLeft().setAxisLineColor(context.getResources().getColor(R.color.divider));
+            chart.getAxisLeft().setAxisLineColor(ContextCompat.getColor(context, R.color.divider));
             chart.getAxisLeft().setGridLineWidth(0.5f);
-            chart.getAxisLeft().setGridColor(context.getResources().getColor(R.color.divider));
+            chart.getAxisLeft().setGridColor(ContextCompat.getColor(context, R.color.divider));
             chart.getAxisLeft().setTextSize(12f);
-            chart.getAxisLeft().setTextColor(context.getResources().getColor(R.color.secondary_text));
+            chart.getAxisLeft().setTextColor(ContextCompat.getColor(context, R.color.secondary_text));
             chart.getAxisLeft().setGranularity(0.5f);
             chart.getAxisLeft().setLabelCount(5, true);
         }
 
-        public void render(List<DataPoint> points) {
+        void render(List<DataPoint> points) {
             if (points == null || points.isEmpty()) {
                 return;
             }
@@ -277,11 +278,11 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
             chart.invalidate();
         }
 
-        public LineDataSet getLineDataSet(List<Entry> entries) {
+        LineDataSet getLineDataSet(List<Entry> entries) {
             LineDataSet lineDataSet = new LineDataSet(entries, "");
             lineDataSet.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
-            lineDataSet.setColor(context.getResources().getColor(R.color.colorPrimary));
-            lineDataSet.setFillColor(context.getResources().getColor(R.color.colorPrimary));
+            lineDataSet.setColor(ContextCompat.getColor(context, R.color.colorPrimary));
+            lineDataSet.setFillColor(ContextCompat.getColor(context, R.color.colorPrimary));
             lineDataSet.setLineWidth(2f);
             lineDataSet.setDrawCircles(false);
             lineDataSet.setDrawValues(false);
@@ -289,7 +290,7 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
             return lineDataSet;
         }
 
-        public class AxisValueFormatter implements IAxisValueFormatter {
+        class AxisValueFormatter implements IAxisValueFormatter {
 
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
@@ -301,23 +302,24 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    class DataViewHolder extends RecyclerView.ViewHolder {
+    private class DataViewHolder extends RecyclerView.ViewHolder {
 
         TextView weightTextView;
         TextView dateTextView;
 
-        public DataViewHolder(View itemView) {
+        DataViewHolder(View itemView) {
             super(itemView);
             weightTextView = (TextView) itemView.findViewById(R.id.weight_text_view);
             dateTextView = (TextView) itemView.findViewById(R.id.date_text_view);
         }
 
-        public void render(DataPoint dataPoint) {
+        void render(DataPoint dataPoint) {
             if (dataPoint.getDataType().getFields().size() == 1) {
                 // DataType com.google.weight の標準単位は kg
                 // https://developers.google.com/fit/android/data-types#public_data_types
                 Field field = dataPoint.getDataType().getFields().get(0);
-                weightTextView.setText(dataPoint.getValue(field).toString() + context.getString(R.string.unit_kg));
+                String text = String.format(context.getString(R.string.unit_kg_format), dataPoint.getValue(field).toString());
+                weightTextView.setText(text);
                 dateTextView.setText(dateFormat.format(dataPoint.getTimestamp(TimeUnit.MILLISECONDS)));
                 itemView.setOnClickListener(v -> callback.onDataPointClicked(dataPoint));
             }

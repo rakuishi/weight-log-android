@@ -10,9 +10,9 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.rakuishi.weight.R;
-import com.rakuishi.weight.util.SignInHelper;
 import com.rakuishi.weight.databinding.ActivitySettingsBinding;
 import com.rakuishi.weight.repo.FitnessClient;
+import com.rakuishi.weight.util.SignInHelper;
 
 public class SettingsActivity extends AppCompatActivity implements FitnessClient.Callback {
 
@@ -33,9 +33,11 @@ public class SettingsActivity extends AppCompatActivity implements FitnessClient
             }
         });
 
-        getSupportActionBar().setTitle(R.string.settings);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(R.string.settings);
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         client = new FitnessClient(this, this);
     }

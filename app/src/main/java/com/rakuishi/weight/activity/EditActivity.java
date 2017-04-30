@@ -20,12 +20,12 @@ import android.widget.Toast;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.Field;
 import com.rakuishi.weight.R;
+import com.rakuishi.weight.databinding.ActivityEditBinding;
 import com.rakuishi.weight.fragment.DatePickerDialogFragment;
 import com.rakuishi.weight.fragment.TimePickerDialogFragment;
-import com.rakuishi.weight.util.SignInHelper;
-import com.rakuishi.weight.databinding.ActivityEditBinding;
 import com.rakuishi.weight.repo.FitnessClient;
 import com.rakuishi.weight.util.LocalDateTimeUtil;
+import com.rakuishi.weight.util.SignInHelper;
 
 import org.threeten.bp.LocalDateTime;
 

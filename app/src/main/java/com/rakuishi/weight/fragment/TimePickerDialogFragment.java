@@ -25,6 +25,9 @@ public class TimePickerDialogFragment extends DialogFragment implements TimePick
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         LocalDateTime localDateTime = (LocalDateTime) getArguments().getSerializable(DATETIME);
+        if (localDateTime == null) {
+            throw new IllegalStateException("This fragment must be set localDateTime. Use `newInstance()` for creating new fragment instance.");
+        }
 
         TimePickerDialog.OnTimeSetListener callback;
         if (getActivity() instanceof TimePickerDialog.OnTimeSetListener) {
