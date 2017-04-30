@@ -23,7 +23,6 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.android.gms.fitness.data.DataPoint;
-import com.google.android.gms.fitness.data.Field;
 import com.rakuishi.weight.R;
 import com.rakuishi.weight.util.DataPointUtil;
 import com.rakuishi.weight.util.DensityUtil;
@@ -268,6 +267,7 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
             chart.setDrawGridBackground(false);
             chart.getAxisRight().setEnabled(false);
             chart.getLegend().setEnabled(false);
+            chart.setPadding((int) DensityUtil.px2Dp(context, 4), 0, 0, 0);
 
             chart.setPinchZoom(false);
             chart.setTouchEnabled(false);
@@ -346,9 +346,10 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
                 }
             }
 
-            LocalDateTime basisLocalDateTime = LocalDateTime.now().minusMonths(getAmount(spinnerSelectedPosition));
+            long days = 30 * getAmount(spinnerSelectedPosition);
+            LocalDateTime basisLocalDateTime = LocalDateTime.now().minusDays(days);
 
-            for (int i = 0; i <= 30 * getAmount(spinnerSelectedPosition); i++) {
+            for (int i = 0; i <= days; i++) {
                 LocalDateTime localDateTime = basisLocalDateTime.plusDays(i);
                 String date = LocalDateTimeUtil.formatSimpleLocalDate(localDateTime);
 
