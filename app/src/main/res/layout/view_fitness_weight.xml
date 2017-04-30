@@ -1,31 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
     android:clickable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    android:gravity="center_vertical"
-    android:orientation="vertical"
-    android:padding="@dimen/dp_16">
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/date_text_view"
-        android:layout_width="wrap_content"
+    <include
+        android:id="@+id/divider"
+        layout="@layout/view_divider"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        tools:text="4月10日" />
+        android:gravity="center_vertical"
+        android:padding="@dimen/dp_16">
 
-    <TextView
-        android:id="@+id/weight_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginBottom="@dimen/dp_4"
-        android:textColor="@android:color/black"
-        android:textSize="@dimen/sp_16"
-        tools:text="56kg" />
+        <TextView
+            android:id="@+id/date_text_view"
+            style="@style/SecondaryTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            tools:text="4月10日" />
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/weight_text_view"
+            style="@style/PrimaryTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="@dimen/dp_4"
+            tools:text="56kg" />
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_divider" />
+
+</LinearLayout>

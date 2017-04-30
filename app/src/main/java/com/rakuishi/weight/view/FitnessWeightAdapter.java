@@ -46,6 +46,11 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
         void onSpinnerItemSelected(int amount);
     }
 
+    private final static int VIEW_TYPE_SPINNER = 0;
+    private final static int VIEW_TYPE_CHART = 1;
+    private final static int VIEW_TYPE_SHADOW = 2;
+    private final static int VIEW_TYPE_DATA_POINT = 3;
+
     private Context context;
     private LayoutInflater inflater;
     private List<DataPoint> dataPoints = new ArrayList<>();
@@ -61,23 +66,26 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public int getItemViewType(int position) {
-        switch (position) {
-            case 0:
-                return 0;
-            case 1:
-                return 1;
-            default:
-                return 2;
+        if (position == 0) {
+            return VIEW_TYPE_SPINNER;
+        } else if (position == 1) {
+            return VIEW_TYPE_CHART;
+        } else if (position == 2 || position == getItemCount() - 1) {
+            return VIEW_TYPE_SHADOW;
+        } else {
+            return VIEW_TYPE_DATA_POINT;
         }
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
-            case 0:
+            case VIEW_TYPE_SPINNER:
                 return new SpinnerViewHolder(inflater.inflate(R.layout.view_spinner, parent, false));
-            case 1:
+            case VIEW_TYPE_CHART:
                 return new ChartViewHolder(inflater.inflate(R.layout.view_chart, parent, false));
+            case VIEW_TYPE_SHADOW:
+                return new ShadowViewHolder(inflater.inflate(R.layout.view_shadow, parent, false));
             default:
                 return new DataViewHolder(inflater.inflate(R.layout.view_fitness_weight, parent, false));
         }
@@ -88,24 +96,26 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
         int viewType = getItemViewType(position);
 
         switch (viewType) {
-            case 0: {
+            case VIEW_TYPE_SPINNER:
                 ((SpinnerViewHolder) holder).render();
                 break;
-            }
-            case 1: {
+            case VIEW_TYPE_CHART:
                 ((ChartViewHolder) holder).render(dataPoints);
                 break;
-            }
-            default: {
-                ((DataViewHolder) holder).render(dataPoints.get(position - 2));
+            case VIEW_TYPE_SHADOW:
                 break;
-            }
+            default:
+                int dataPosition = position - 3;
+                ((DataViewHolder) holder).render(dataPoints.get(dataPosition), dataPosition == 0);
+                break;
         }
     }
 
     @Override
     public int getItemCount() {
-        return dataPoints.isEmpty() ? 0 : dataPoints.size() + 2;
+        return dataPoints.isEmpty()
+                ? 0
+                : dataPoints.size() + 4; // spinner + chart + shadow + shadow
     }
 
     public void setDataPoints(List<DataPoint> dataPoints) {
@@ -366,14 +376,16 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         TextView weightTextView;
         TextView dateTextView;
+        View divider;
 
         DataViewHolder(View itemView) {
             super(itemView);
             weightTextView = (TextView) itemView.findViewById(R.id.weight_text_view);
             dateTextView = (TextView) itemView.findViewById(R.id.date_text_view);
+            divider = itemView.findViewById(R.id.divider);
         }
 
-        void render(DataPoint dataPoint) {
+        void render(DataPoint dataPoint, boolean isFirst) {
             if (dataPoint.getDataType().getFields().size() == 1) {
                 // DataType com.google.weight の標準単位は kg
                 // https://developers.google.com/fit/android/data-types#public_data_types
@@ -382,7 +394,15 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
                 weightTextView.setText(text);
                 dateTextView.setText(dateFormat.format(dataPoint.getTimestamp(TimeUnit.MILLISECONDS)));
                 itemView.setOnClickListener(v -> callback.onDataPointClicked(dataPoint));
+                divider.setVisibility(isFirst ? View.VISIBLE : View.GONE);
             }
+        }
+    }
+
+    private class ShadowViewHolder extends RecyclerView.ViewHolder {
+
+        ShadowViewHolder(View itemView) {
+            super(itemView);
         }
     }
 }

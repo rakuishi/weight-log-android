@@ -15,7 +15,6 @@ import com.google.android.gms.fitness.data.DataPoint;
 import com.rakuishi.weight.R;
 import com.rakuishi.weight.databinding.ActivityMainBinding;
 import com.rakuishi.weight.repo.FitnessClient;
-import com.rakuishi.weight.view.DividerItemDecoration;
 import com.rakuishi.weight.view.FitnessWeightAdapter;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -42,7 +41,6 @@ public class MainActivity extends AppCompatActivity implements
 
         adapter = new FitnessWeightAdapter(this, this);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        binding.recyclerView.addItemDecoration(new DividerItemDecoration(getResources()));
         binding.recyclerView.setAdapter(adapter);
         binding.signInButton.setSize(SignInButton.SIZE_WIDE);
         binding.signInButton.setOnClickListener(this);

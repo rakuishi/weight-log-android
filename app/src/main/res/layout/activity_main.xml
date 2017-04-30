@@ -13,7 +13,7 @@
             android:layout_height="match_parent"
             android:background="@color/card_background"
             android:clipToPadding="false"
-            android:paddingBottom="@dimen/dp_88" />
+            android:paddingBottom="@dimen/dp_72" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"
