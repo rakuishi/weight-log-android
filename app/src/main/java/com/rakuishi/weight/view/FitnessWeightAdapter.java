@@ -58,9 +58,10 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
     private Callback callback;
     private int spinnerSelectedPosition;
 
-    public FitnessWeightAdapter(Context context, Callback callback) {
+    public FitnessWeightAdapter(Context context, Callback callback, int position) {
         this.context = context;
         this.callback = callback;
+        this.spinnerSelectedPosition = position;
         inflater = LayoutInflater.from(context);
     }
 
@@ -124,7 +125,11 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
         notifyDataSetChanged();
     }
 
-    private int getAmount(int position) {
+    public int getPosition() {
+        return spinnerSelectedPosition;
+    }
+
+    public int getAmount(int position) {
         switch (position) {
             case 0:
                 return 1;

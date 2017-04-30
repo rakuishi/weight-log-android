@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements
     private CompositeDisposable compositeDisposable;
     private ActivityMainBinding binding;
     private FitnessWeightAdapter adapter;
+    private int selectedPosition = 0;
 
     public static Intent create(Context context) {
         return new Intent(context, MainActivity.class);
@@ -40,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        adapter = new FitnessWeightAdapter(this, this);
+        adapter = new FitnessWeightAdapter(this, this, selectedPosition);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerView.setAdapter(adapter);
         binding.signInButton.setSize(SignInButton.SIZE_WIDE);
@@ -49,6 +50,12 @@ public class MainActivity extends AppCompatActivity implements
 
         compositeDisposable = new CompositeDisposable();
         client = new FitnessClient(this, this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        selectedPosition = adapter.getPosition();
     }
 
     @Override
@@ -80,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onConnectionSuccess() {
-        loadFitnessWeight(1);
+        loadFitnessWeight(adapter.getAmount(selectedPosition));
         invalidateOptionsMenu();
         binding.fab.setVisibility(View.VISIBLE);
     }
