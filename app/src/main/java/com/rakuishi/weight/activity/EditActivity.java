@@ -225,10 +225,13 @@ public class EditActivity extends AppCompatActivity implements FitnessClient.Cal
     }
 
     private void save() {
-        // TODO: validate weight value
         float weight = Float.valueOf(binding.weightEditText.getText().toString());
-        // TODO: validate epochMilli value. Do not set future time
         long epochMilli = LocalDateTimeUtil.toEpochMilli(localDateTime);
+
+        if (epochMilli > System.currentTimeMillis()) {
+            Toast.makeText(this, R.string.does_not_accept_future_value, Toast.LENGTH_LONG).show();
+            return;
+        }
 
         Completable completable = dataPoint == null
                 ? client.insert(weight, epochMilli)

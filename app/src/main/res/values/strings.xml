@@ -18,4 +18,5 @@
     <string name="date_range_format">%1$s ~ %2$s</string>
     <string name="vs_percent_format">%1$.1f %%</string>
     <string name="vs_date_format">vs %1$s</string>
+    <string name="does_not_accept_future_value">Doesn\'t accept future timestamp.</string>
 </resources>
