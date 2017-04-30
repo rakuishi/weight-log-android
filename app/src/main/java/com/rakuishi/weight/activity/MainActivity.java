@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.rakuishi.weight.R;
@@ -88,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onConnectionFail(Exception e) {
         binding.progressBar.setVisibility(View.GONE);
         binding.signInButton.setVisibility(View.VISIBLE);
+        showGooglePlayServicesDialogIfAvailable();
     }
 
     // endregion
@@ -133,5 +135,17 @@ public class MainActivity extends AppCompatActivity implements
                     adapter.setDataPoints(dataPoints);
                 });
         compositeDisposable.add(disposable);
+    }
+
+    /**
+     * Google Play Services に関する問題でユーザーが解決可能ならば、ダイアログを表示する
+     * https://developers.google.com/android/reference/com/google/android/gms/common/GoogleApiAvailability
+     */
+    private void showGooglePlayServicesDialogIfAvailable() {
+        GoogleApiAvailability availability = GoogleApiAvailability.getInstance();
+        int code = availability.isGooglePlayServicesAvailable(this);
+        if (availability.isUserResolvableError(code)) {
+            availability.getErrorDialog(this, 1, 2).show();
+        }
     }
 }
