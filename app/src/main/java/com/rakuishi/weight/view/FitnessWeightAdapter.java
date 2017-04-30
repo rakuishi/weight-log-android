@@ -256,7 +256,6 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
             chart.setDrawGridBackground(false);
             chart.getAxisRight().setEnabled(false);
             chart.getLegend().setEnabled(false);
-            chart.setExtraLeftOffset(4f);
 
             chart.setPinchZoom(false);
             chart.setTouchEnabled(false);
@@ -271,8 +270,8 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
             chart.getXAxis().setValueFormatter(new AxisValueFormatter());
 
             chart.getAxisLeft().setAxisLineWidth(1f);
-            chart.getAxisLeft().setAxisLineColor(ContextCompat.getColor(context, R.color.divider));
-            chart.getAxisLeft().setGridLineWidth(0.5f);
+            chart.getAxisLeft().setAxisLineColor(ContextCompat.getColor(context, R.color.white));
+            chart.getAxisLeft().setGridLineWidth(1f);
             chart.getAxisLeft().setGridColor(ContextCompat.getColor(context, R.color.divider));
             chart.getAxisLeft().setTextSize(12f);
             chart.getAxisLeft().setTextColor(ContextCompat.getColor(context, R.color.secondary_text));
@@ -343,8 +342,8 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
             LineData lineData = new LineData(dataSets);
 
             chart.setData(lineData);
-            chart.getAxisLeft().setAxisMaximum((float) Math.ceil(max) + 1f);
-            chart.getAxisLeft().setAxisMinimum((float) Math.floor(min) - 1f);
+            chart.getAxisLeft().setAxisMaximum((float) Math.ceil(max));
+            chart.getAxisLeft().setAxisMinimum((float) Math.floor(min));
             chart.invalidate();
         }
 
