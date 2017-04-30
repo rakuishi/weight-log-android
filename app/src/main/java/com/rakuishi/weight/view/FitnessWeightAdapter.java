@@ -1,6 +1,9 @@
 package com.rakuishi.weight.view;
 
 import android.content.Context;
+import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,6 +25,7 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.Field;
 import com.rakuishi.weight.R;
+import com.rakuishi.weight.util.DensityUtil;
 import com.rakuishi.weight.util.LocalDateTimeUtil;
 
 import org.threeten.bp.LocalDateTime;
@@ -122,20 +126,6 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    private ArrayAdapter<String> getSpinnerArrayAdapter() {
-        String items[] = {getDateRange(getAmount(0)), getDateRange(getAmount(1)), getDateRange(getAmount(2)), getDateRange(getAmount(3))};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, items);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        return adapter;
-    }
-
-    private String getDateRange(int amount) {
-        LocalDateTime localDateTime = LocalDateTime.now();
-        String start = LocalDateTimeUtil.formatLocalizedDate(localDateTime);
-        String end = LocalDateTimeUtil.formatLocalizedDate(localDateTime.minusMonths(amount));
-        return String.format(context.getString(R.string.date_range_format), 30 * amount, start, end);
-    }
-
     private class SpinnerViewHolder extends RecyclerView.ViewHolder {
 
         // スピナーの初期設定時に `onItemSelected()` が発火するのを防ぐ
@@ -149,7 +139,7 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         void render() {
             spinnerSelectedCount = 0;
-            spinner.setAdapter(getSpinnerArrayAdapter());
+            spinner.setAdapter(getArrayAdapter());
             spinner.setSelection(spinnerSelectedPosition);
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -165,6 +155,76 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
 
                 }
             });
+        }
+
+        private SpinnerArrayAdapter getArrayAdapter() {
+            SpinnerObject objects[] = {
+                    getSpinnerObject(getAmount(0)),
+                    getSpinnerObject(getAmount(1)),
+                    getSpinnerObject(getAmount(2)),
+                    getSpinnerObject(getAmount(3))
+            };
+            return new SpinnerArrayAdapter(context, objects);
+        }
+
+        private SpinnerObject getSpinnerObject(int amount) {
+            LocalDateTime localDateTime = LocalDateTime.now();
+            String start = LocalDateTimeUtil.formatLocalizedDate(localDateTime);
+            String end = LocalDateTimeUtil.formatLocalizedDate(localDateTime.minusMonths(amount));
+
+            return new SpinnerObject(
+                    String.format(context.getString(R.string.last_days_format), 30 * amount),
+                    String.format(context.getString(R.string.date_range_format), start, end)
+            );
+        }
+
+        private class SpinnerObject {
+
+            String primaryText, secondaryText;
+
+            SpinnerObject(String primaryText, String secondaryText) {
+                this.primaryText = primaryText;
+                this.secondaryText = secondaryText;
+            }
+        }
+
+        private class SpinnerArrayAdapter extends ArrayAdapter<SpinnerObject> {
+
+            SpinnerArrayAdapter(@NonNull Context context, @NonNull SpinnerObject[] objects) {
+                this(context, 0, objects);
+            }
+
+            private SpinnerArrayAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull SpinnerObject[] objects) {
+                super(context, resource, objects);
+            }
+
+            @NonNull
+            @Override
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                return getCustomView(position, parent, false);
+            }
+
+            @Override
+            public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                return getCustomView(position, parent, true);
+            }
+
+            View getCustomView(int position, ViewGroup parent, boolean isDropDown) {
+                LayoutInflater inflater = LayoutInflater.from(context);
+                View rootView = inflater.inflate(R.layout.view_spinner_item, parent, false);
+                if (isDropDown) {
+                    int dp16 = (int) DensityUtil.dp2Px(context, 16);
+                    rootView.setPadding(dp16, dp16, dp16, dp16);
+                }
+
+                SpinnerObject object = getItem(position);
+                if (object != null) {
+                    ((TextView) rootView.findViewById(R.id.primary_text_view)).setText(object.primaryText);
+                    ((TextView) rootView.findViewById(R.id.secondary_text_view)).setText(object.secondaryText);
+                }
+
+                return rootView;
+            }
         }
     }
 

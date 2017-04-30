@@ -14,5 +14,6 @@
     <string name="failed_to_connect">Google Play services connection failed.</string>
     <string name="clear_default_account_and_reconnect">Clear default account and Restart</string>
     <string name="note_update_or_delete_data">This data is inserted by other apps. 3rd party apps, which use Google Fit API, cannot update / delete data inserted by other apps.</string>
-    <string name="date_range_format">Last %1$d days (%2$s ~ %3$s)</string>
+    <string name="last_days_format">Last %1$d days</string>
+    <string name="date_range_format">%1$s ~ %2$s</string>
 </resources>
