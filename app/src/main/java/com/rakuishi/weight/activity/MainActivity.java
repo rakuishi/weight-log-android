@@ -16,6 +16,7 @@ import com.google.android.gms.fitness.data.DataPoint;
 import com.rakuishi.weight.R;
 import com.rakuishi.weight.databinding.ActivityMainBinding;
 import com.rakuishi.weight.repo.FitnessClient;
+import com.rakuishi.weight.view.EmptyAdapter;
 import com.rakuishi.weight.view.FitnessWeightAdapter;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -29,7 +30,8 @@ public class MainActivity extends AppCompatActivity implements
     private FitnessClient client;
     private CompositeDisposable compositeDisposable;
     private ActivityMainBinding binding;
-    private FitnessWeightAdapter adapter;
+    private FitnessWeightAdapter fitnessWeightAdapter;
+    private EmptyAdapter emptyAdapter;
     private int selectedPosition = 0;
 
     public static Intent create(Context context) {
@@ -41,9 +43,11 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        adapter = new FitnessWeightAdapter(this, this, selectedPosition);
+        fitnessWeightAdapter = new FitnessWeightAdapter(this, this, selectedPosition);
+        emptyAdapter = new EmptyAdapter(this);
+
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        binding.recyclerView.setAdapter(adapter);
+        binding.recyclerView.setAdapter(fitnessWeightAdapter);
         binding.signInButton.setSize(SignInButton.SIZE_WIDE);
         binding.signInButton.setOnClickListener(this);
         binding.fab.setOnClickListener(this);
@@ -55,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onPause() {
         super.onPause();
-        selectedPosition = adapter.getPosition();
+        selectedPosition = fitnessWeightAdapter.getPosition();
     }
 
     @Override
@@ -87,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onConnectionSuccess() {
-        loadFitnessWeight(adapter.getAmount(selectedPosition));
+        loadFitnessWeight(fitnessWeightAdapter.getAmount(selectedPosition));
         invalidateOptionsMenu();
         binding.fab.setVisibility(View.VISIBLE);
     }
@@ -139,7 +143,12 @@ public class MainActivity extends AppCompatActivity implements
                 .subscribeOn(Schedulers.newThread())
                 .subscribe(dataPoints -> {
                     binding.progressBar.setVisibility(View.GONE);
-                    adapter.setDataPoints(dataPoints);
+                    if (dataPoints == null || dataPoints.size() == 0) {
+                        binding.recyclerView.setAdapter(emptyAdapter);
+                    } else {
+                        binding.recyclerView.setAdapter(fitnessWeightAdapter);
+                        fitnessWeightAdapter.setDataPoints(dataPoints);
+                    }
                 });
         compositeDisposable.add(disposable);
     }
