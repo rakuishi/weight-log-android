@@ -10,7 +10,12 @@ import org.threeten.bp.LocalDateTime;
 
 public class DatePickerDialogFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
+    public interface OnDataSetListener {
+        void onDateSet(android.widget.DatePicker view, int year, int monthValue, int dayOfMonth);
+    }
+
     private static final String DATETIME = "localDateTime";
+    private OnDataSetListener callback;
 
     public static DatePickerDialogFragment newInstance(LocalDateTime localDateTime) {
         DatePickerDialogFragment fragment = new DatePickerDialogFragment();
@@ -28,24 +33,24 @@ public class DatePickerDialogFragment extends DialogFragment implements DatePick
             throw new IllegalStateException("This fragment must be set localDateTime. Use `newInstance()` for creating new fragment instance.");
         }
 
-        DatePickerDialog.OnDateSetListener callback;
-        if (getActivity() instanceof DatePickerDialog.OnDateSetListener) {
-            callback = (DatePickerDialog.OnDateSetListener) getActivity();
+        if (getActivity() instanceof DatePickerDialogFragment.OnDataSetListener) {
+            callback = (DatePickerDialogFragment.OnDataSetListener) getActivity();
         } else {
-            throw new IllegalStateException("The parent activity must set DatePickerDialog.OnDateSetListener");
+            throw new IllegalStateException("The parent activity must set DatePickerDialogFragment.OnDataSetListener");
         }
 
         return new DatePickerDialog(
                 getContext(),
-                callback,
+                this,
                 localDateTime.getYear(),
-                localDateTime.getMonthValue(),
+                // `getMonthValue()` は 1-12 を返すが、DatePickerDialog には 0-11 を登録する
+                localDateTime.getMonthValue() - 1,
                 localDateTime.getDayOfMonth()
         );
     }
 
     @Override
     public void onDateSet(android.widget.DatePicker view, int year, int month, int dayOfMonth) {
-
+        callback.onDateSet(view, year, month + 1, dayOfMonth);
     }
 }

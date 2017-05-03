@@ -1,6 +1,5 @@
 package com.rakuishi.weight.activity;
 
-import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -39,7 +38,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class EditActivity extends AppCompatActivity implements FitnessClient.Callback,
-        View.OnClickListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
+        View.OnClickListener, DatePickerDialogFragment.OnDataSetListener, TimePickerDialog.OnTimeSetListener {
 
     private final static String KEY_DATA_POINT = "dataPoint";
     private CompositeDisposable compositeDisposable;
@@ -170,8 +169,8 @@ public class EditActivity extends AppCompatActivity implements FitnessClient.Cal
     // region Picker
 
     @Override
-    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        localDateTime = localDateTime.withYear(year).withMonth(month).withDayOfMonth(dayOfMonth);
+    public void onDateSet(DatePicker view, int year, int monthValue, int dayOfMonth) {
+        localDateTime = localDateTime.withYear(year).withMonth(monthValue).withDayOfMonth(dayOfMonth);
         updateViewComponents();
     }
 
