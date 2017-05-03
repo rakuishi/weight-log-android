@@ -247,6 +247,8 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     private class ChartViewHolder extends RecyclerView.ViewHolder {
 
+        private static final int MAX_X_AXIS_LABEL_COUNT = 5;
+
         TextView weightTextView;
         TextView dateTextView;
         TextView vsPercentTextView;
@@ -287,7 +289,7 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
             chart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
             chart.getXAxis().setAxisLineWidth(1f);
             chart.getXAxis().setAxisLineColor(ContextCompat.getColor(context, R.color.divider));
-            chart.getXAxis().setLabelCount(5, true);
+            chart.getXAxis().setLabelCount(MAX_X_AXIS_LABEL_COUNT, true);
             chart.getXAxis().setTextSize(12f);
             chart.getXAxis().setTextColor(ContextCompat.getColor(context, R.color.secondary_text));
             chart.getXAxis().setDrawGridLines(false);
@@ -387,7 +389,7 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
             }
 
             // データ数が 1 個の時はグラフ描画が満足に行えないため描画を見送る
-            if (entries.isEmpty() || entries.size() == 1) {
+            if (entryHashMap.size() < 2 || entries.size() < 2) {
                 return;
             }
 
@@ -396,8 +398,9 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
             LineData lineData = new LineData(dataSets);
 
             chart.setData(lineData);
-            chart.getAxisLeft().setAxisMaximum((float) Math.ceil(max));
-            chart.getAxisLeft().setAxisMinimum((float) Math.floor(min));
+            chart.getXAxis().setLabelCount(Math.min(MAX_X_AXIS_LABEL_COUNT, entries.size()), true);
+            chart.getAxisLeft().setAxisMaximum((float) Math.ceil(max) + 0.5f);
+            chart.getAxisLeft().setAxisMinimum((float) Math.floor(min) - 0.5f);
             chart.invalidate();
         }
 
