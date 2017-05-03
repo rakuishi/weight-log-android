@@ -20,4 +20,5 @@
     <string name="vs_date_format">vs %1$s</string>
     <string name="does_not_accept_future_value">Doesn\'t accept future timestamp.</string>
     <string name="lets_add_your_weight">Let\'s add your weight!</string>
+    <string name="not_enough_data">There are not enough data to draw the line chart.</string>
 </resources>

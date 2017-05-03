@@ -1,6 +1,7 @@
 package com.rakuishi.weight.view;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
@@ -120,7 +122,6 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public void setDataPoints(List<DataPoint> dataPoints) {
-        // TODO: データが空の時のレイアウトを作成する
         this.dataPoints = dataPoints;
         notifyDataSetChanged();
     }
@@ -268,6 +269,12 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
             vsDateTextView = (TextView) itemView.findViewById(R.id.vs_date_text_view);
 
             chart = (LineChart) itemView.findViewById(R.id.chart);
+
+            chart.setNoDataText(context.getString(R.string.not_enough_data));
+            chart.setNoDataTextColor(ContextCompat.getColor(context, R.color.secondary_text));
+            Paint paint = chart.getPaint(Chart.PAINT_INFO);
+            paint.setTextSize(DensityUtil.dp2Px(context, 14f));
+
             chart.getDescription().setEnabled(false);
             chart.setDrawGridBackground(false);
             chart.getAxisRight().setEnabled(false);
@@ -379,7 +386,8 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
                 }
             }
 
-            if (entries.isEmpty()) {
+            // データ数が 1 個の時はグラフ描画が満足に行えないため描画を見送る
+            if (entries.isEmpty() || entries.size() == 1) {
                 return;
             }
 
@@ -409,8 +417,9 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
 
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
+                // データ項目が少ない場合は、指定した position 以外も入ってくる可能性があり、マイナス値も考慮する
                 int position = (int) value;
-                return (entries == null || position >= entries.size())
+                return (entries == null || position < 0 || position >= entries.size())
                         ? ""
                         : (String) entries.get(position).getData();
             }
