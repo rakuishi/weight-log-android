@@ -378,8 +378,8 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
 
                 } else if (!entries.isEmpty()) {
                     // HashMap にない場合は直前のデータを再利用し、数字は上書きする
-                    Entry entry = entries.get(entries.size() - 1);
-                    entry.setX(entries.size());
+                    Entry prevEntry = entries.get(entries.size() - 1);
+                    Entry entry = new Entry(entries.size(), prevEntry.getY());
                     entry.setData(date);
                     entries.add(entry);
 
@@ -406,7 +406,7 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         LineDataSet getLineDataSet(List<Entry> entries) {
             LineDataSet lineDataSet = new LineDataSet(entries, "");
-            lineDataSet.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
+            lineDataSet.setMode(LineDataSet.Mode.LINEAR);
             lineDataSet.setColor(ContextCompat.getColor(context, R.color.colorPrimary));
             lineDataSet.setFillColor(ContextCompat.getColor(context, R.color.colorPrimary));
             lineDataSet.setLineWidth(2f);
