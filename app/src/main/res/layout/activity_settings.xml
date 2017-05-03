@@ -4,58 +4,77 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/card_background">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
-            <TextView
-                style="@style/SubHeaderList"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/account" />
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/bomb_text_view"
-                style="@style/SingleLineList"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/change_default_account" />
+                <TextView
+                    style="@style/SubHeaderList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/account" />
 
-            <TextView
-                style="@style/SubHeaderList"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/about" />
+                <include layout="@layout/view_divider" />
 
-            <TextView
-                android:id="@+id/version_text_view"
-                style="@style/SingleLineList"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:text="Version 1.0.0(1)" />
+                <TextView
+                    android:id="@+id/bomb_text_view"
+                    style="@style/SingleLineList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/change_default_account" />
 
-            <include layout="@layout/view_divider" />
+                <include layout="@layout/view_divider" />
 
-            <TextView
-                android:id="@+id/developer_text_view"
-                style="@style/SingleLineList"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/developed_by" />
+                <include layout="@layout/view_shadow" />
 
-            <include layout="@layout/view_divider" />
+                <TextView
+                    style="@style/SubHeaderList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/about" />
 
-            <TextView
-                android:id="@+id/license_text_view"
-                style="@style/SingleLineList"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/licenses" />
+                <include layout="@layout/view_divider" />
 
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/version_text_view"
+                    style="@style/SingleLineList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:text="Version 1.0.0(1)" />
+
+                <include layout="@layout/view_divider" />
+
+                <TextView
+                    android:id="@+id/developer_text_view"
+                    style="@style/SingleLineList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/developed_by" />
+
+                <include layout="@layout/view_divider" />
+
+                <TextView
+                    android:id="@+id/license_text_view"
+                    style="@style/SingleLineList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/licenses" />
+
+                <include layout="@layout/view_divider" />
+
+                <include layout="@layout/view_shadow" />
+
+            </LinearLayout>
+
+        </ScrollView>
 
         <ProgressBar
             android:id="@+id/progress_bar"

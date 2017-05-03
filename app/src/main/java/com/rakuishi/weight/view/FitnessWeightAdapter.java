@@ -88,7 +88,7 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
             case VIEW_TYPE_CHART:
                 return new ChartViewHolder(inflater.inflate(R.layout.view_chart, parent, false));
             case VIEW_TYPE_SHADOW:
-                return new ShadowViewHolder(inflater.inflate(R.layout.view_shadow, parent, false));
+                return new ShadowViewHolder(inflater.inflate(R.layout.view_shadow_spacer, parent, false));
             default:
                 return new DataViewHolder(inflater.inflate(R.layout.view_fitness_weight, parent, false));
         }
