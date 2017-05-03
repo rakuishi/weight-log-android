@@ -12,7 +12,6 @@
     <string name="time">Time</string>
     <string name="settings">Settings</string>
     <string name="failed_to_connect">Google Play services connection failed.</string>
-    <string name="clear_default_account_and_reconnect">Clear default account and Restart</string>
     <string name="note_update_or_delete_data">This data is inserted by other apps. 3rd party apps, which use Google Fit API, cannot update / delete data inserted by other apps.</string>
     <string name="last_days_format">Last %1$d days</string>
     <string name="date_range_format">%1$s ~ %2$s</string>
@@ -21,4 +20,12 @@
     <string name="does_not_accept_future_value">Doesn\'t accept future timestamp.</string>
     <string name="lets_add_your_weight">Let\'s add your weight!</string>
     <string name="not_enough_data">There are not enough data to draw the line chart.</string>
+
+    <string name="account">Account</string>
+    <string name="change_default_account">Change default account</string>
+    <string name="about">About Weight</string>
+    <string name="version_format">Version %1$s(%2$d)</string>
+    <string name="developed_by">Developed by rakuishi</string>
+    <string name="developer_website">https://rakuishi.com</string>
+    <string name="licenses">3rd Party Licenses</string>
 </resources>

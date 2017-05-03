@@ -23,4 +23,23 @@
         <item name="android:textSize">@dimen/sp_14</item>
     </style>
 
+    <style name="SubHeaderList">
+        <item name="android:paddingTop">@dimen/dp_16</item>
+        <item name="android:paddingRight">@dimen/dp_16</item>
+        <item name="android:paddingLeft">@dimen/dp_16</item>
+        <item name="android:paddingBottom">@dimen/dp_4</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textSize">@dimen/sp_14</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="SingleLineList">
+        <item name="android:padding">@dimen/dp_16</item>
+        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:textSize">@dimen/sp_16</item>
+        <item name="android:clickable">true</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+    </style>
+
 </resources>
