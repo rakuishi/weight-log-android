@@ -53,6 +53,11 @@ public class SettingsActivity extends AppCompatActivity implements FitnessClient
             customTabsIntent.launchUrl(SettingsActivity.this, uri);
         });
 
+        binding.licenseTextView.setOnClickListener(v -> {
+            String url = getString(R.string.licenses_path);
+            startActivity(WebViewActivity.create(SettingsActivity.this, url));
+        });
+
         client = new FitnessClient(this, this);
     }
 

@@ -1,4 +1,5 @@
 <resources>
+
     <string name="app_name">Weight</string>
     <string name="unit_kg">kg</string>
     <string name="unit_kg_format">%1$.1f kg</string>
@@ -26,6 +27,9 @@
     <string name="about">About</string>
     <string name="version_format">Version %1$s(%2$d)</string>
     <string name="developed_by">Developed by rakuishi</string>
-    <string name="developer_website">https://rakuishi.com</string>
     <string name="licenses">3rd Party Licenses</string>
+
+    <string name="licenses_path" translatable="false">file:///android_asset/licenses.html</string>
+    <string name="developer_website" translatable="false">https://rakuishi.com</string>
+
 </resources>
