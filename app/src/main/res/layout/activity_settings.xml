@@ -72,6 +72,14 @@
 
                 <include layout="@layout/view_shadow" />
 
+                <TextView
+                    style="@style/SecondaryTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/dp_16"
+                    android:lineSpacingMultiplier="@dimen/line_spacing"
+                    android:text="@string/terms_of_service" />
+
             </LinearLayout>
 
         </ScrollView>

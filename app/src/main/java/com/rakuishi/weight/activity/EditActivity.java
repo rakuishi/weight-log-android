@@ -64,6 +64,7 @@ public class EditActivity extends AppCompatActivity implements FitnessClient.Cal
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_edit);
+        compositeDisposable = new CompositeDisposable();
 
         extractValuesFromIntent(getIntent());
         isEditable = (dataPoint == null);
@@ -74,7 +75,6 @@ public class EditActivity extends AppCompatActivity implements FitnessClient.Cal
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        compositeDisposable = new CompositeDisposable();
         client = new FitnessClient(this, this);
 
         updateViewComponents();

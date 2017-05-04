@@ -15,6 +15,7 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.rakuishi.weight.R;
 import com.rakuishi.weight.databinding.ActivityMainBinding;
+import com.rakuishi.weight.pref.DefaultPrefs;
 import com.rakuishi.weight.repo.FitnessClient;
 import com.rakuishi.weight.view.EmptyAdapter;
 import com.rakuishi.weight.view.FitnessWeightAdapter;
@@ -42,6 +43,13 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        compositeDisposable = new CompositeDisposable();
+
+        if (DefaultPrefs.showWelcome(this)) {
+            startActivity(WelcomeActivity.create(this));
+            finish();
+            return;
+        }
 
         fitnessWeightAdapter = new FitnessWeightAdapter(this, this, selectedPosition);
         emptyAdapter = new EmptyAdapter(this);
@@ -52,7 +60,6 @@ public class MainActivity extends AppCompatActivity implements
         binding.signInButton.setOnClickListener(this);
         binding.fab.setOnClickListener(this);
 
-        compositeDisposable = new CompositeDisposable();
         client = new FitnessClient(this, this);
     }
 

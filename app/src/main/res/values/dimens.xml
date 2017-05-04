@@ -5,6 +5,7 @@
     <dimen name="dp_4">4dp</dimen>
     <dimen name="dp_8">8dp</dimen>
     <dimen name="dp_16">16dp</dimen>
+    <dimen name="dp_48">48dp</dimen>
     <dimen name="dp_72">72dp</dimen>
     <dimen name="dp_88">88dp</dimen>
     <dimen name="dp_120">120dp</dimen>
@@ -15,5 +16,6 @@
     <dimen name="sp_20">20sp</dimen>
 
     <dimen name="horizontal_progressbar_negative_padding">-7dp</dimen>
+    <item name="line_spacing" format="float" type="dimen">1.2</item>
 
 </resources>
