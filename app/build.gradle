@@ -1,3 +1,5 @@
+// google-services plugin makes conflict when the plugin is below the com.android.application
+apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
 
@@ -39,6 +41,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     compile 'com.google.android.gms:play-services-fitness:10.2.1'
+    compile 'com.google.android.gms:play-services-analytics:10.2.1'
     compile 'com.jakewharton.timber:timber:4.5.1'
     compile 'com.jakewharton.threetenabp:threetenabp:1.0.5'
 

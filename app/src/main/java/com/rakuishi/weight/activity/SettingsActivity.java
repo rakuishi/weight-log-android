@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.customtabs.CustomTabsIntent;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -17,7 +16,7 @@ import com.rakuishi.weight.databinding.ActivitySettingsBinding;
 import com.rakuishi.weight.repo.FitnessClient;
 import com.rakuishi.weight.util.SignInHelper;
 
-public class SettingsActivity extends AppCompatActivity implements FitnessClient.Callback {
+public class SettingsActivity extends BaseActivity implements FitnessClient.Callback {
 
     private ActivitySettingsBinding binding;
     private FitnessClient client;

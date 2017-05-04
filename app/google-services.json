@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "576498893047",
+    "project_id": "vernal-bonfire-163712"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:576498893047:android:40d5e5b2acde1d5b",
+        "android_client_info": {
+          "package_name": "com.rakuishi.weight"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "576498893047-rvhke1fn8o7p2mn1mt5gfmvij7g846v8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rakuishi.weight",
+            "certificate_hash": "5129e12a76b556949cf31d40a2ae5850abd8fae8"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCc9Qz9OTjfq7dyoJbkXNYhQBGd_e00154"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-36241060-2"
+          }
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

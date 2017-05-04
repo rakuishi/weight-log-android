@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,7 +36,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class EditActivity extends AppCompatActivity implements FitnessClient.Callback,
+public class EditActivity extends BaseActivity implements FitnessClient.Callback,
         View.OnClickListener, DatePickerDialogFragment.OnDataSetListener, TimePickerDialog.OnTimeSetListener {
 
     private final static String KEY_DATA_POINT = "dataPoint";

@@ -5,13 +5,12 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.rakuishi.weight.R;
 import com.rakuishi.weight.databinding.ActivityWebViewBinding;
 
-public class WebViewActivity extends AppCompatActivity {
+public class WebViewActivity extends BaseActivity {
 
     private final static String KEY_URL = "url";
     private ActivityWebViewBinding binding;
