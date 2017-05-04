@@ -23,6 +23,11 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_welcome);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
+
         binding.signInButton.setSize(SignInButton.SIZE_WIDE);
         binding.signInButton.setOnClickListener(v -> {
             DefaultPrefs.setShowWelcom(this, false);

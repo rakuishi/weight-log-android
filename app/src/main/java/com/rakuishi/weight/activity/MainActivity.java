@@ -54,6 +54,12 @@ public class MainActivity extends AppCompatActivity implements
         fitnessWeightAdapter = new FitnessWeightAdapter(this, this, selectedPosition);
         emptyAdapter = new EmptyAdapter(this);
 
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("");
+            getSupportActionBar().setIcon(R.drawable.icon);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerView.setAdapter(fitnessWeightAdapter);
         binding.signInButton.setSize(SignInButton.SIZE_WIDE);
