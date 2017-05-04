@@ -49,13 +49,21 @@
             android:layout_marginTop="@dimen/horizontal_progressbar_negative_padding"
             android:indeterminate="true" />
 
-        <com.google.android.gms.common.SignInButton
-            android:id="@+id/sign_in_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+        <RelativeLayout
+            android:id="@+id/sign_in_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/ad_view"
             android:visibility="gone"
-            tools:visibility="visible" />
+            tools:visibility="visible">
+
+            <com.google.android.gms.common.SignInButton
+                android:id="@+id/sign_in_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
+
+        </RelativeLayout>
 
     </RelativeLayout>
 

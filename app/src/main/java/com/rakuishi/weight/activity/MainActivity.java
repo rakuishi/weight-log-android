@@ -109,12 +109,14 @@ public class MainActivity extends BaseActivity implements
         loadFitnessWeight(fitnessWeightAdapter.getAmount(selectedPosition));
         invalidateOptionsMenu();
         binding.fab.setVisibility(View.VISIBLE);
+        binding.signInLayout.setVisibility(View.GONE);
     }
 
     @Override
     public void onConnectionFail(Exception e) {
+        invalidateOptionsMenu();
         binding.progressBar.setVisibility(View.GONE);
-        binding.signInButton.setVisibility(View.VISIBLE);
+        binding.signInLayout.setVisibility(View.VISIBLE);
         showGooglePlayServicesDialogIfAvailable();
     }
 
@@ -159,13 +161,21 @@ public class MainActivity extends BaseActivity implements
                 .subscribe(dataPoints -> {
                     binding.progressBar.setVisibility(View.GONE);
                     if (dataPoints == null || dataPoints.size() == 0) {
+                        updateRecyclerViewPaddingBottom(true);
                         binding.recyclerView.setAdapter(emptyAdapter);
                     } else {
+                        updateRecyclerViewPaddingBottom(false);
                         binding.recyclerView.setAdapter(fitnessWeightAdapter);
                         fitnessWeightAdapter.setDataPoints(dataPoints);
                     }
                 });
         compositeDisposable.add(disposable);
+    }
+
+    private void updateRecyclerViewPaddingBottom(boolean isEmpty) {
+        binding.recyclerView.setPadding(
+                0, 0, 0, isEmpty ? 0 : (int) getResources().getDimension(R.dimen.dp_72)
+        );
     }
 
     /**
