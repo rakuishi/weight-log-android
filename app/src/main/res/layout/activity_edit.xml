@@ -114,6 +114,7 @@
                     style="@style/SecondaryTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:lineSpacingMultiplier="@dimen/line_spacing"
                     android:text="@string/note_update_or_delete_data"
                     android:visibility="gone"
                     tools:visibility="visible" />
