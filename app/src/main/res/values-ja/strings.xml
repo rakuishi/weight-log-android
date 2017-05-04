@@ -1,0 +1,33 @@
+<resources>
+
+    <string name="app_name">Weight Tron</string>
+    <string name="unit_kg">kg</string>
+    <string name="unit_kg_format">%1$.1f kg</string>
+    <string name="save">保存</string>
+    <string name="edit">編集</string>
+    <string name="delete">削除</string>
+    <string name="edit_your_weight">体重を編集する</string>
+    <string name="add_your_weight">体重を追加する</string>
+    <string name="weight">体重</string>
+    <string name="date">日付</string>
+    <string name="time">時刻</string>
+    <string name="settings">設定</string>
+    <string name="failed_to_connect">Google Play services との接続に失敗しました。</string>
+    <string name="note_update_or_delete_data">このデータは他のアプリから追加されています。Google Fit API を使用するサードパーティ製アプリは、他のアプリから追加されたデータを編集・削除することができません。</string>
+    <string name="last_days_format">過去 %1$d 日間</string>
+    <string name="date_range_format">%1$s ~ %2$s</string>
+    <string name="vs_percent_format">%1$.1f %%</string>
+    <string name="vs_date_format">%1$s との比較</string>
+    <string name="does_not_accept_future_value">未来の日時は追加できません。</string>
+    <string name="lets_add_your_weight">最初の体重を追加しよう！</string>
+    <string name="not_enough_data">グラフを描くための十分なデータがありません。</string>
+
+    <string name="account">Google Fit Account</string>
+    <string name="change_default_account">Google Fit Account を変更する</string>
+    <string name="about">About</string>
+    <string name="version_format">Version %1$s(%2$d)</string>
+    <string name="developed_by">Developed by rakuishi</string>
+    <string name="licenses">3rd Party Licenses</string>
+    <string name="terms_of_service">このアプリは Google Fit 経由であなたの体重データを利用しています。このことは、あなたのデータは開発者のサーバで保持していないことを意味します。また、Google Analytics を導入していますが、改善目的のためだけに使われています。</string>
+
+</resources>
