@@ -32,5 +32,7 @@
 
     <string name="licenses_path" translatable="false">file:///android_asset/licenses.html</string>
     <string name="developer_website" translatable="false">https://rakuishi.com</string>
+    <string name="banner_app_id" translatable="false">ca-app-pub-9983442877454265~6726639323</string>
+    <string name="banner_ad_unit_id" translatable="false">ca-app-pub-9983442877454265/8203372526</string>
 
 </resources>

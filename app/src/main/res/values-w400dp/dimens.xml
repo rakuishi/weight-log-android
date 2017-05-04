@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 広告縦幅 -->
+    <dimen name="banner_height">50dp</dimen>
+
+</resources>

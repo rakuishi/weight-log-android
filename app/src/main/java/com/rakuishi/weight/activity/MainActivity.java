@@ -9,9 +9,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.fitness.data.DataPoint;
+import com.rakuishi.weight.BuildConfig;
 import com.rakuishi.weight.R;
 import com.rakuishi.weight.databinding.ActivityMainBinding;
 import com.rakuishi.weight.pref.DefaultPrefs;
@@ -66,6 +68,7 @@ public class MainActivity extends BaseActivity implements
         binding.fab.setOnClickListener(this);
 
         client = new FitnessClient(this, this);
+        showAd();
     }
 
     @Override
@@ -175,5 +178,19 @@ public class MainActivity extends BaseActivity implements
         if (availability.isUserResolvableError(code)) {
             availability.getErrorDialog(this, 1, 2).show();
         }
+    }
+
+    private void showAd() {
+        AdRequest request;
+        if (BuildConfig.DEBUG) {
+            request = new AdRequest.Builder()
+                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)        // All emulators
+                    .addTestDevice("AC98C820A50B4AD8A2106EDE96FB87D4")  // An example device ID
+                    .build();
+        } else {
+            request = new AdRequest.Builder().build();
+        }
+
+        binding.adView.loadAd(request);
     }
 }

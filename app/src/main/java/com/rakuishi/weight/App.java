@@ -2,6 +2,7 @@ package com.rakuishi.weight;
 
 import android.app.Application;
 
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.jakewharton.threetenabp.AndroidThreeTen;
@@ -16,8 +17,13 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
 
+        // JSR-310 backport
         AndroidThreeTen.init(this);
 
+        // AdMob
+        MobileAds.initialize(this, getString(R.string.banner_app_id));
+
+        // Logger
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         }

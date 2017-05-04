@@ -18,4 +18,7 @@
     <dimen name="horizontal_progressbar_negative_padding">-7dp</dimen>
     <item name="line_spacing" format="float" type="dimen">1.2</item>
 
+    <!-- 広告縦幅 -->
+    <dimen name="banner_height">32dp</dimen>
+
 </resources>
