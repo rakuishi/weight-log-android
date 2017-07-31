@@ -34,6 +34,7 @@ public class MainActivity extends BaseActivity implements
     private ActivityMainBinding binding;
     private FitnessWeightAdapter fitnessWeightAdapter;
     private EmptyAdapter emptyAdapter;
+    // TODO: Store last selected position
     private int selectedPosition = 0;
 
     public static Intent create(Context context) {
@@ -74,7 +75,6 @@ public class MainActivity extends BaseActivity implements
     @Override
     protected void onPause() {
         super.onPause();
-        selectedPosition = fitnessWeightAdapter.getPosition();
     }
 
     @Override
@@ -87,6 +87,7 @@ public class MainActivity extends BaseActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         if (client.isConnected()) {
             getMenuInflater().inflate(R.menu.activity_main, menu);
+            checkMenuItemIfNeeded(menu.findItem(R.id.last_30_days));
         }
         return true;
     }
@@ -99,14 +100,56 @@ public class MainActivity extends BaseActivity implements
                 break;
         }
 
+        checkMenuItemIfNeeded(item);
         return super.onOptionsItemSelected(item);
+    }
+
+    private void checkMenuItemIfNeeded(MenuItem item) {
+        int position = getPositionFromCheckableMenuItem(item.getItemId());
+        if (position != -1) {
+            item.setChecked(true);
+            selectedPosition = position;
+            binding.progressBar.setVisibility(View.VISIBLE);
+            fitnessWeightAdapter.setAmount(getAmount(selectedPosition));
+            loadFitnessWeight(getAmount(selectedPosition));
+        }
+    }
+
+    private int getPositionFromCheckableMenuItem(int id) {
+        switch (id) {
+            case R.id.last_30_days:
+                return 0;
+            case R.id.last_90_days:
+                return 1;
+            case R.id.last_180_days:
+                return 2;
+            case R.id.last_360_days:
+                return 3;
+            default:
+                return -1;
+        }
+    }
+
+    private int getAmount(int position) {
+        switch (position) {
+            case 0:
+                return 1;
+            case 1:
+                return 3;
+            case 2:
+                return 6;
+            case 3:
+                return 12;
+            default:
+                return -1;
+        }
     }
 
     // region FitnessClient.Callback
 
     @Override
     public void onConnectionSuccess() {
-        loadFitnessWeight(fitnessWeightAdapter.getAmount(selectedPosition));
+        loadFitnessWeight(getAmount(selectedPosition));
         invalidateOptionsMenu();
         binding.fab.setVisibility(View.VISIBLE);
         binding.signInLayout.setVisibility(View.GONE);
@@ -144,12 +187,6 @@ public class MainActivity extends BaseActivity implements
     @Override
     public void onDataPointClicked(DataPoint dataPoint) {
         startActivity(EditActivity.create(this, dataPoint));
-    }
-
-    @Override
-    public void onSpinnerItemSelected(int amount) {
-        binding.progressBar.setVisibility(View.VISIBLE);
-        loadFitnessWeight(amount);
     }
 
     // endregion

@@ -14,13 +14,16 @@
     <string name="settings">設定</string>
     <string name="failed_to_connect">Google Play services との接続に失敗しました。</string>
     <string name="note_update_or_delete_data">このデータは他のアプリから追加されています。Google Fit API を使用するサードパーティ製アプリは、他のアプリから追加されたデータを編集・削除することができません。</string>
-    <string name="last_days_format">過去 %1$d 日間</string>
-    <string name="date_range_format">%1$s ~ %2$s</string>
     <string name="vs_percent_format">%1$.1f %%</string>
     <string name="vs_date_format">%1$s との比較</string>
     <string name="does_not_accept_future_value">未来の日時は追加できません。</string>
     <string name="lets_add_your_weight">最初の体重を追加しよう！</string>
     <string name="not_enough_data">グラフを描くための十分なデータがありません。</string>
+
+    <string name="last_30_days">過去 30 日間</string>
+    <string name="last_90_days">過去 90 日間</string>
+    <string name="last_180_days">過去 180 日間</string>
+    <string name="last_360_days">過去 360 日間</string>
 
     <string name="account">Google Fit Account</string>
     <string name="change_default_account">Google Fit Account を変更する</string>

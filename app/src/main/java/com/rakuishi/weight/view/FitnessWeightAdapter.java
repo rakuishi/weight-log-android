@@ -2,17 +2,11 @@ package com.rakuishi.weight.view;
 
 import android.content.Context;
 import android.graphics.Paint;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.Chart;
@@ -44,11 +38,8 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public interface Callback {
         void onDataPointClicked(DataPoint dataPoint);
-
-        void onSpinnerItemSelected(int amount);
     }
 
-    private final static int VIEW_TYPE_SPINNER = 0;
     private final static int VIEW_TYPE_CHART = 1;
     private final static int VIEW_TYPE_SHADOW = 2;
     private final static int VIEW_TYPE_DATA_POINT = 3;
@@ -58,22 +49,20 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
     private List<DataPoint> dataPoints = new ArrayList<>();
     private DateFormat dateFormat = getDateInstance();
     private Callback callback;
-    private int spinnerSelectedPosition;
+    private int amount;
 
-    public FitnessWeightAdapter(Context context, Callback callback, int position) {
+    public FitnessWeightAdapter(Context context, Callback callback, int amount) {
         this.context = context;
         this.callback = callback;
-        this.spinnerSelectedPosition = position;
+        this.amount = amount;
         inflater = LayoutInflater.from(context);
     }
 
     @Override
     public int getItemViewType(int position) {
         if (position == 0) {
-            return VIEW_TYPE_SPINNER;
-        } else if (position == 1) {
             return VIEW_TYPE_CHART;
-        } else if (position == 2 || position == getItemCount() - 1) {
+        } else if (position == 1 || position == getItemCount() - 1) {
             return VIEW_TYPE_SHADOW;
         } else {
             return VIEW_TYPE_DATA_POINT;
@@ -83,8 +72,6 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
-            case VIEW_TYPE_SPINNER:
-                return new SpinnerViewHolder(inflater.inflate(R.layout.view_spinner, parent, false));
             case VIEW_TYPE_CHART:
                 return new ChartViewHolder(inflater.inflate(R.layout.view_chart, parent, false));
             case VIEW_TYPE_SHADOW:
@@ -99,16 +86,13 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
         int viewType = getItemViewType(position);
 
         switch (viewType) {
-            case VIEW_TYPE_SPINNER:
-                ((SpinnerViewHolder) holder).render();
-                break;
             case VIEW_TYPE_CHART:
                 ((ChartViewHolder) holder).render(dataPoints);
                 break;
             case VIEW_TYPE_SHADOW:
                 break;
             default:
-                int dataPosition = position - 3;
+                int dataPosition = position - 2;
                 ((DataViewHolder) holder).render(dataPoints.get(dataPosition), dataPosition == 0);
                 break;
         }
@@ -118,7 +102,7 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
     public int getItemCount() {
         return dataPoints.isEmpty()
                 ? 0
-                : dataPoints.size() + 4; // spinner + chart + shadow + shadow
+                : dataPoints.size() + 3; // chart + shadow + shadow
     }
 
     public void setDataPoints(List<DataPoint> dataPoints) {
@@ -126,123 +110,8 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
         notifyDataSetChanged();
     }
 
-    public int getPosition() {
-        return spinnerSelectedPosition;
-    }
-
-    public int getAmount(int position) {
-        switch (position) {
-            case 0:
-                return 1;
-            case 1:
-                return 2;
-            case 2:
-                return 3;
-            default:
-                return 6;
-        }
-    }
-
-    private class SpinnerViewHolder extends RecyclerView.ViewHolder {
-
-        // スピナーの初期設定時に `onItemSelected()` が発火するのを防ぐ
-        private int spinnerSelectedCount;
-        Spinner spinner;
-
-        SpinnerViewHolder(View itemView) {
-            super(itemView);
-            spinner = (Spinner) itemView.findViewById(R.id.spinner);
-        }
-
-        void render() {
-            spinnerSelectedCount = 0;
-            spinner.setAdapter(getArrayAdapter());
-            spinner.setSelection(spinnerSelectedPosition);
-            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    if (++spinnerSelectedCount > 1) {
-                        spinnerSelectedPosition = position;
-                        callback.onSpinnerItemSelected(getAmount(position));
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-
-                }
-            });
-        }
-
-        private SpinnerArrayAdapter getArrayAdapter() {
-            SpinnerObject objects[] = {
-                    getSpinnerObject(getAmount(0)),
-                    getSpinnerObject(getAmount(1)),
-                    getSpinnerObject(getAmount(2)),
-                    getSpinnerObject(getAmount(3))
-            };
-            return new SpinnerArrayAdapter(context, objects);
-        }
-
-        private SpinnerObject getSpinnerObject(int amount) {
-            LocalDateTime localDateTime = LocalDateTime.now();
-            String start = LocalDateTimeUtil.formatLocalizedDate(localDateTime);
-            String end = LocalDateTimeUtil.formatLocalizedDate(localDateTime.minusMonths(amount));
-
-            return new SpinnerObject(
-                    String.format(context.getString(R.string.last_days_format), 30 * amount),
-                    String.format(context.getString(R.string.date_range_format), start, end)
-            );
-        }
-
-        private class SpinnerObject {
-
-            String primaryText, secondaryText;
-
-            SpinnerObject(String primaryText, String secondaryText) {
-                this.primaryText = primaryText;
-                this.secondaryText = secondaryText;
-            }
-        }
-
-        private class SpinnerArrayAdapter extends ArrayAdapter<SpinnerObject> {
-
-            SpinnerArrayAdapter(@NonNull Context context, @NonNull SpinnerObject[] objects) {
-                this(context, 0, objects);
-            }
-
-            private SpinnerArrayAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull SpinnerObject[] objects) {
-                super(context, resource, objects);
-            }
-
-            @NonNull
-            @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                return getCustomView(position, parent, false);
-            }
-
-            @Override
-            public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                return getCustomView(position, parent, true);
-            }
-
-            View getCustomView(int position, ViewGroup parent, boolean isDropDown) {
-                LayoutInflater inflater = LayoutInflater.from(context);
-                View rootView = inflater.inflate(R.layout.view_spinner_item, parent, false);
-                if (isDropDown) {
-                    int dp16 = (int) DensityUtil.dp2Px(context, 16);
-                    rootView.setPadding(dp16, dp16, dp16, dp16);
-                }
-
-                SpinnerObject object = getItem(position);
-                if (object != null) {
-                    ((TextView) rootView.findViewById(R.id.primary_text_view)).setText(object.primaryText);
-                    ((TextView) rootView.findViewById(R.id.secondary_text_view)).setText(object.secondaryText);
-                }
-
-                return rootView;
-            }
-        }
+    public void setAmount(int amount) {
+        this.amount = amount;
     }
 
     private class ChartViewHolder extends RecyclerView.ViewHolder {
@@ -360,7 +229,7 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
                 }
             }
 
-            long days = 30 * getAmount(spinnerSelectedPosition);
+            long days = 30 * amount;
             LocalDateTime basisLocalDateTime = LocalDateTime.now().minusDays(days);
 
             for (int i = 0; i <= days; i++) {
