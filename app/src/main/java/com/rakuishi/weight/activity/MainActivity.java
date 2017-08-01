@@ -29,12 +29,14 @@ import io.reactivex.schedulers.Schedulers;
 public class MainActivity extends BaseActivity implements
         FitnessClient.Callback, View.OnClickListener, FitnessWeightAdapter.Callback {
 
+    private static final int AMOUNT_POSITION_MIN = 0;
+    private static final int AMOUNT_POSITION_MAX = 3;
+
     private FitnessClient client;
     private CompositeDisposable compositeDisposable;
     private ActivityMainBinding binding;
     private FitnessWeightAdapter fitnessWeightAdapter;
     private EmptyAdapter emptyAdapter;
-    // TODO: Store last selected position
     private int selectedPosition = 0;
 
     public static Intent create(Context context) {
@@ -53,6 +55,8 @@ public class MainActivity extends BaseActivity implements
             return;
         }
 
+        int position = DefaultPrefs.getAmountPosition(this);
+        selectedPosition = Math.max(AMOUNT_POSITION_MIN, Math.min(AMOUNT_POSITION_MAX, position));
         fitnessWeightAdapter = new FitnessWeightAdapter(this, this, selectedPosition);
         emptyAdapter = new EmptyAdapter(this);
 
@@ -87,7 +91,7 @@ public class MainActivity extends BaseActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         if (client.isConnected()) {
             getMenuInflater().inflate(R.menu.activity_main, menu);
-            checkMenuItemIfNeeded(menu.findItem(R.id.last_30_days));
+            checkMenuItemIfNeeded(menu.findItem(getMenuItemIdFromPosition(selectedPosition)));
         }
         return true;
     }
@@ -105,17 +109,33 @@ public class MainActivity extends BaseActivity implements
     }
 
     private void checkMenuItemIfNeeded(MenuItem item) {
-        int position = getPositionFromCheckableMenuItem(item.getItemId());
+        int position = getPositionFromMenuItemId(item.getItemId());
         if (position != -1) {
             item.setChecked(true);
             selectedPosition = position;
+            DefaultPrefs.setAmountPosition(this, position);
             binding.progressBar.setVisibility(View.VISIBLE);
             fitnessWeightAdapter.setAmount(getAmount(selectedPosition));
             loadFitnessWeight(getAmount(selectedPosition));
         }
     }
 
-    private int getPositionFromCheckableMenuItem(int id) {
+    private int getMenuItemIdFromPosition(int position) {
+        switch (position) {
+            case 0:
+                return R.id.last_30_days;
+            case 1:
+                return R.id.last_90_days;
+            case 2:
+                return R.id.last_180_days;
+            case 3:
+                return R.id.last_360_days;
+            default:
+                return -1;
+        }
+    }
+
+    private int getPositionFromMenuItemId(int id) {
         switch (id) {
             case R.id.last_30_days:
                 return 0;
