@@ -29,7 +29,7 @@ public class WelcomeActivity extends BaseActivity {
 
         binding.signInButton.setSize(SignInButton.SIZE_WIDE);
         binding.signInButton.setOnClickListener(v -> {
-            DefaultPrefs.setShowWelcom(this, false);
+            DefaultPrefs.setShowWelcome(this, false);
             startActivity(MainActivity.create(this));
         });
     }

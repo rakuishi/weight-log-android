@@ -16,7 +16,7 @@ public class DefaultPrefs {
         return prefs.getBoolean(show_welcome, true);
     }
 
-    public static void setShowWelcom(Context context, boolean value) {
+    public static void setShowWelcome(Context context, boolean value) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(show_welcome, value);
