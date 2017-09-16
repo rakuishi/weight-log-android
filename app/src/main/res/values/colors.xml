@@ -10,4 +10,5 @@
     <color name="card_background">#F5F5F5</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
+    <color name="ic_background">@color/colorPrimary</color>
 </resources>
