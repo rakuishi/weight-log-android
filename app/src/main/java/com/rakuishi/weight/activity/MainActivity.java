@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -20,6 +21,7 @@ import com.rakuishi.weight.pref.DefaultPrefs;
 import com.rakuishi.weight.repo.FitnessClient;
 import com.rakuishi.weight.view.EmptyAdapter;
 import com.rakuishi.weight.view.FitnessWeightAdapter;
+import com.rakuishi.weight.view.SpinnerAdapter;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -60,11 +62,9 @@ public class MainActivity extends BaseActivity implements
         fitnessWeightAdapter = new FitnessWeightAdapter(this, this, selectedPosition);
         emptyAdapter = new EmptyAdapter(this);
 
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("");
-            getSupportActionBar().setIcon(R.drawable.icon);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-        }
+        setSupportActionBar(binding.toolbar);
+        // noinspection ConstantConditions
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerView.setAdapter(fitnessWeightAdapter);
@@ -89,10 +89,7 @@ public class MainActivity extends BaseActivity implements
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (client.isConnected()) {
-            getMenuInflater().inflate(R.menu.activity_main, menu);
-            checkMenuItemIfNeeded(menu.findItem(getMenuItemIdFromPosition(selectedPosition)));
-        }
+        getMenuInflater().inflate(R.menu.activity_main, menu);
         return true;
     }
 
@@ -104,50 +101,39 @@ public class MainActivity extends BaseActivity implements
                 break;
         }
 
-        checkMenuItemIfNeeded(item);
         return super.onOptionsItemSelected(item);
     }
 
-    private void checkMenuItemIfNeeded(MenuItem item) {
-        int position = getPositionFromMenuItemId(item.getItemId());
-        if (position != -1) {
-            item.setChecked(true);
-            selectedPosition = position;
-            DefaultPrefs.setAmountPosition(this, position);
-            binding.progressBar.setVisibility(View.VISIBLE);
-            fitnessWeightAdapter.setAmount(getAmount(selectedPosition));
-            loadFitnessWeight(getAmount(selectedPosition));
+    private void setupSpinnerIfNeeded() {
+        if (!client.isConnected()) {
+            return;
         }
-    }
 
-    private int getMenuItemIdFromPosition(int position) {
-        switch (position) {
-            case 0:
-                return R.id.last_30_days;
-            case 1:
-                return R.id.last_90_days;
-            case 2:
-                return R.id.last_180_days;
-            case 3:
-                return R.id.last_360_days;
-            default:
-                return -1;
-        }
-    }
+        String[] objects = new String[]{
+                getString(R.string.last_30_days),
+                getString(R.string.last_90_days),
+                getString(R.string.last_180_days),
+                getString(R.string.last_360_days)
+        };
 
-    private int getPositionFromMenuItemId(int id) {
-        switch (id) {
-            case R.id.last_30_days:
-                return 0;
-            case R.id.last_90_days:
-                return 1;
-            case R.id.last_180_days:
-                return 2;
-            case R.id.last_360_days:
-                return 3;
-            default:
-                return -1;
-        }
+        SpinnerAdapter adapter = new SpinnerAdapter(MainActivity.this, objects);
+        binding.spinner.setAdapter(adapter);
+        binding.spinner.setSelection(selectedPosition);
+        binding.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedPosition = position;
+                DefaultPrefs.setAmountPosition(MainActivity.this, position);
+                binding.progressBar.setVisibility(View.VISIBLE);
+                fitnessWeightAdapter.setAmount(getAmount(selectedPosition));
+                loadFitnessWeight(getAmount(selectedPosition));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     private int getAmount(int position) {
@@ -169,15 +155,13 @@ public class MainActivity extends BaseActivity implements
 
     @Override
     public void onConnectionSuccess() {
-        loadFitnessWeight(getAmount(selectedPosition));
-        invalidateOptionsMenu();
+        setupSpinnerIfNeeded();
         binding.fab.setVisibility(View.VISIBLE);
         binding.signInLayout.setVisibility(View.GONE);
     }
 
     @Override
     public void onConnectionFail(Exception e) {
-        invalidateOptionsMenu();
         binding.progressBar.setVisibility(View.GONE);
         binding.signInLayout.setVisibility(View.VISIBLE);
         showGooglePlayServicesDialogIfAvailable();

@@ -2,31 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <group android:checkableBehavior="single">
-
-        <item
-            android:id="@+id/last_30_days"
-            android:title="@string/last_30_days"
-            app:showAsAction="never" />
-
-        <item
-            android:id="@+id/last_90_days"
-            android:title="@string/last_90_days"
-            app:showAsAction="never" />
-
-        <item
-            android:id="@+id/last_180_days"
-            android:title="@string/last_180_days"
-            app:showAsAction="never" />
-
-        <item
-            android:id="@+id/last_360_days"
-            android:title="@string/last_360_days"
-            app:showAsAction="never" />
-
-    </group>
-
-
     <item
         android:id="@+id/settings"
         android:icon="@drawable/ic_settings_white_24dp"
