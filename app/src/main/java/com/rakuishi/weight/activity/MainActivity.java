@@ -159,6 +159,7 @@ public class MainActivity extends BaseActivity implements
 
     @Override
     public void onConnectionFail(Exception e) {
+        binding.spinner.setEnabled(false);
         binding.progressBar.setVisibility(View.GONE);
         binding.signInLayout.setVisibility(View.VISIBLE);
         showGooglePlayServicesDialogIfAvailable();
