@@ -66,6 +66,34 @@ public class MainActivity extends BaseActivity implements
         // noinspection ConstantConditions
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+        String[] objects = new String[]{
+                getString(R.string.last_30_days),
+                getString(R.string.last_90_days),
+                getString(R.string.last_180_days),
+                getString(R.string.last_360_days)
+        };
+
+        SpinnerAdapter adapter = new SpinnerAdapter(MainActivity.this, objects);
+        binding.spinner.setEnabled(false);
+        binding.spinner.setAdapter(adapter);
+        binding.spinner.setSelection(selectedPosition);
+        binding.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedPosition = position;
+                DefaultPrefs.setAmountPosition(MainActivity.this, position);
+
+                if (client.isConnected()) {
+                    loadFitnessWeight(getAmount(selectedPosition));
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerView.setAdapter(fitnessWeightAdapter);
         binding.signInButton.setSize(SignInButton.SIZE_WIDE);
@@ -104,38 +132,6 @@ public class MainActivity extends BaseActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    private void setupSpinnerIfNeeded() {
-        if (!client.isConnected()) {
-            return;
-        }
-
-        String[] objects = new String[]{
-                getString(R.string.last_30_days),
-                getString(R.string.last_90_days),
-                getString(R.string.last_180_days),
-                getString(R.string.last_360_days)
-        };
-
-        SpinnerAdapter adapter = new SpinnerAdapter(MainActivity.this, objects);
-        binding.spinner.setAdapter(adapter);
-        binding.spinner.setSelection(selectedPosition);
-        binding.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedPosition = position;
-                DefaultPrefs.setAmountPosition(MainActivity.this, position);
-                binding.progressBar.setVisibility(View.VISIBLE);
-                fitnessWeightAdapter.setAmount(getAmount(selectedPosition));
-                loadFitnessWeight(getAmount(selectedPosition));
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-    }
-
     private int getAmount(int position) {
         switch (position) {
             case 0:
@@ -155,7 +151,8 @@ public class MainActivity extends BaseActivity implements
 
     @Override
     public void onConnectionSuccess() {
-        setupSpinnerIfNeeded();
+        binding.spinner.setEnabled(true);
+        loadFitnessWeight(getAmount(selectedPosition));
         binding.fab.setVisibility(View.VISIBLE);
         binding.signInLayout.setVisibility(View.GONE);
     }
@@ -196,6 +193,9 @@ public class MainActivity extends BaseActivity implements
     // endregion
 
     private void loadFitnessWeight(int amount) {
+        binding.progressBar.setVisibility(View.VISIBLE);
+
+        fitnessWeightAdapter.setAmount(amount);
         Disposable disposable = client.find(amount)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.newThread())
