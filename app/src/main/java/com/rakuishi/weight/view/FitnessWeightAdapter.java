@@ -170,8 +170,7 @@ public class FitnessWeightAdapter extends RecyclerView.Adapter<RecyclerView.View
             chart.getAxisLeft().setGridColor(ContextCompat.getColor(context, R.color.divider));
             chart.getAxisLeft().setTextSize(12f);
             chart.getAxisLeft().setTextColor(ContextCompat.getColor(context, R.color.secondary_text));
-            chart.getAxisLeft().setGranularity(0.5f);
-            chart.getAxisLeft().setLabelCount(5, true);
+            chart.getAxisLeft().setLabelCount(4, false);
         }
 
         void render(List<DataPoint> points) {
