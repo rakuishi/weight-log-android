@@ -1,6 +1,6 @@
-# weight-tron-android
+# weight-log-android
 
-> Weight Tron - Let's easily record your weight.
+> Weight Log - Let's easily record your weight.
 
 ![](.github/promotion.png)
 

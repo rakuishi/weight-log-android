@@ -1,6 +1,6 @@
 <resources>
 
-    <string name="app_name">Weight Tron</string>
+    <string name="app_name">Weight Log</string>
     <string name="unit_kg">kg</string>
     <string name="unit_kg_format">%1$.1f kg</string>
     <string name="save">Save</string>
@@ -31,7 +31,7 @@
     <string name="version_format">Version %1$s(%2$d)</string>
     <string name="developed_by">Developed by rakuishi</string>
     <string name="licenses">3rd Party Licenses</string>
-    <string name="terms_of_service">\"Weight Tron\" uses your weight data via Google Fit. It means this app doesn\'t collect your data on developer\'s server. Although \"Weight Tron\" uses Google Analytics, this app will just utilize it\'s logs for improvement.</string>
+    <string name="terms_of_service">\"Weight Log\" uses your weight data via Google Fit. It means this app doesn\'t collect your data on developer\'s server. Although \"Weight Log\" uses Google Analytics, this app will just utilize it\'s logs for improvement.</string>
 
     <string name="licenses_path" translatable="false">file:///android_asset/licenses.html</string>
     <string name="developer_website" translatable="false">https://rakuishi.com</string>
