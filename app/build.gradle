@@ -1,15 +1,12 @@
-// google-services plugin makes conflict when the plugin is below the com.android.application
-apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.android.application'
-apply plugin: 'me.tatarka.retrolambda'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
     defaultConfig {
         applicationId "com.rakuishi.weight"
         minSdkVersion 21
-        targetSdkVersion 26
+        targetSdkVersion 28
         versionCode 4
         versionName "1.0.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -30,25 +27,30 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:26.+'
-    compile 'com.android.support:recyclerview-v7:26.+'
-    compile 'com.android.support:design:26.+'
-    compile 'com.android.support:customtabs:26.+'
-    testCompile 'junit:junit:4.12'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:support-v4:28.0.0'
+    implementation 'com.android.support:support-media-compat:28.0.0'
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
+    implementation 'com.android.support:design:28.0.0'
+    implementation 'com.android.support:customtabs:28.0.0'
+    testImplementation 'junit:junit:4.12'
 
-    compile 'com.google.android.gms:play-services-fitness:10.2.1'
-    compile 'com.google.android.gms:play-services-analytics:10.2.1'
-    // AdMob
-    compile 'com.google.firebase:firebase-ads:10.2.1'
-    compile 'com.jakewharton.timber:timber:4.5.1'
-    compile 'com.jakewharton.threetenabp:threetenabp:1.0.5'
+    implementation 'com.google.android.gms:play-services-fitness:10.2.1'
+    implementation 'com.google.android.gms:play-services-analytics:10.2.1'
+    implementation 'com.google.firebase:firebase-core:10.2.1'
+    implementation 'com.google.firebase:firebase-ads:10.2.1' // AdMob
 
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    compile 'io.reactivex.rxjava2:rxjava:2.0.8'
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.0.5'
 
-    compile 'com.github.PhilJay:MPAndroidChart:v3.0.2'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation 'io.reactivex.rxjava2:rxjava:2.0.8'
+
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.2'
 }
+
+apply plugin: 'com.google.gms.google-services'
